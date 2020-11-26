@@ -6,7 +6,7 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var ethereumRouter = require('./routes/ethereum');
-var villaRouter = require('./routes/vila');
+var vilaRouter = require('./routes/vila');
 var usdtRouter = require('./routes/usdt');
 const swaggerJSDoc = require('swagger-jsdoc');
 
@@ -25,7 +25,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/ethereum', ethereumRouter);
-app.use('/villa', villaRouter);
+app.use('/vila', vilaRouter);
 app.use('/usdt', usdtRouter);
 
 

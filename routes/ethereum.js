@@ -122,5 +122,40 @@ router.get('/balance', EthereumController.getBalance);
 router.post('/transfer', EthereumController.transferTo);
 
 
+/**
+ * @swagger
+ * /ethereum/transactions:
+ *   get:
+ *     summary: Get Transactions History
+ *     description: Get Transaction History of an Address
+ *  
+ *     parameters:
+ *       - in: query
+ *         name: address
+ *         type: string
+ *         required: true
+ *       - in: query
+ *         name: startblock
+ *         type: integer
+ *         required: false
+ *       - in: query
+ *         name: endblock
+ *         type: integer
+ *         required: false
+ *     responses:
+ *       200:
+ *         description: An object containing the transactions found
+ *         content:
+ *           application/json:
+ *         schema:
+ *           type: object
+ *           properties:
+ *             transactions:
+ *               type: object
+ *               description: The transactions found.
+ */
+router.get('/transactions', EthereumController.transactions);
+
+
 
 module.exports = router;

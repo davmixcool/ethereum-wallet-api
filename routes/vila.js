@@ -1,5 +1,6 @@
 var express = require('express');
-var VILAController = require('../controllers/VILAController');
+const ERC20Controller = require('../controllers/ERC20Controller');
+const Contract = require('../contracts/vila');
 var router = express.Router();
 
 /**
@@ -30,7 +31,7 @@ var router = express.Router();
  *               type: integer
  *               description: The Token Decimals.
  */
-router.get('/get/info', VILAController.getInfo);
+router.get('/info', ERC20Controller.getInfo(Contract));
 
 
 /**
@@ -57,7 +58,7 @@ router.get('/get/info', VILAController.getInfo);
  *               type: integer
  *               description: The balance of the account
  */
-router.get('/balance', VILAController.getBalance);
+router.get('/balance', ERC20Controller.getBalance(Contract));
 
 
 /**
@@ -68,7 +69,8 @@ router.get('/balance', VILAController.getBalance);
  *     description: Transfer VILA Token To An Address
  *  
  */
-router.post('/transfer', VILAController.transferTo);
+router.post('/transfer', ERC20Controller.transferTo(Contract));
+
 
 
 

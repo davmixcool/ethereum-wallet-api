@@ -1,5 +1,6 @@
 var express = require('express');
-var USDTController = require('../controllers/USDTController');
+const ERC20Controller = require('../controllers/ERC20Controller');
+const Contract = require('../contracts/usdt');
 var router = express.Router();
 
 
@@ -31,7 +32,7 @@ var router = express.Router();
  *               type: integer
  *               description: The Token Decimals.
  */
-router.get('/get/info', USDTController.getInfo);
+router.get('/info', ERC20Controller.getInfo(Contract));
 
 
 /**
@@ -58,7 +59,7 @@ router.get('/get/info', USDTController.getInfo);
  *               type: integer
  *               description: The balance of the account
  */
-router.get('/balance', USDTController.getBalance);
+router.get('/balance', ERC20Controller.getBalance(Contract));
 
 
 /**
@@ -69,7 +70,8 @@ router.get('/balance', USDTController.getBalance);
  *     description: Transfer USDT Token To An Address
  *  
  */
-router.post('/transfer', USDTController.transferTo);
+router.post('/transfer', ERC20Controller.transferTo(Contract));
+
 
 
 
