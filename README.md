@@ -1,6 +1,6 @@
 # Ethereum Wallet API
 
-Ethereum Wallet API is a service that comprises of different endpoints for creating and managing an ethereum wallet. 
+Ethereum Wallet API is a service that comprises of different endpoints for creating and managing an ethereum wallet using web3. 
 
 
 [![GitHub license](https://img.shields.io/github/license/davmixcool/ethereum-wallet-api.svg)](https://github.com/davmixcool/ethereum-wallet-api/blob/master/LICENSE)  [![GitHub issues](https://img.shields.io/github/issues/davmixcool/ethereum-wallet-api.svg)](https://github.com/davmixcool/ethereum-wallet-api/issues) 
