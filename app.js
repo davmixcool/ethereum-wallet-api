@@ -32,9 +32,9 @@ app.use('/usdt', usdtRouter);
 // -- setup up swagger-jsdoc --
 const swaggerDefinition = {
   info: {
-    title: 'Blockvila Ethereum Wallet',
+    title: 'Ethereum Wallet API',
     version: '1.0.0',
-    description: 'Blockvila Ethereum Wallet',
+    description: 'Ethereum Wallet API',
   },
   host: 'localhost:3000',
   basePath: '/',
