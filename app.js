@@ -33,7 +33,7 @@ app.use('/usdt', usdtRouter);
 const swaggerDefinition = {
   info: {
     title: 'Ethereum Wallet API',
-    version: '1.0.0',
+    version: '0.1.0',
     description: 'Ethereum Wallet API',
   },
   host: 'localhost:3000',
