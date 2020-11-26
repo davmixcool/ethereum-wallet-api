@@ -98,7 +98,7 @@ router.post('/unlock/account', EthereumController.unlockAccount);
  *               type: integer
  *               description: The Token Decimals.
  */
-router.get('/info', VILAController.getInfo);
+router.get('/info', EthereumController.getInfo);
 
 /**
  * @swagger

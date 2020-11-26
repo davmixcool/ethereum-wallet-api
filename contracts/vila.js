@@ -3,7 +3,7 @@ const contractAddress = '0x0Bb89decc5A8f6A72a7CB331DCebA0b6b45B3b11';
 exports.Token = {
       symbol: 'VILA',
       name: 'Blockvila',
-      contractAddress = contractAddress;
+      contractAddress: contractAddress,
       decimals: 18,
 };
 

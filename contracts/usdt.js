@@ -3,7 +3,7 @@ const contractAddress = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
 exports.Token = {
       symbol: 'USDT',
       name: 'Tether',
-      contractAddress = contractAddress;
+      contractAddress: contractAddress,
       decimals: 6,
 };
 
