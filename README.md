@@ -11,11 +11,6 @@ Ethereum Wallet API is a service that comprises of different endpoints for creat
 
 ## Supported Wallet
 
-* ETH Wallets
-* ERC20 Wallets
-
-## Supported Tokens
-
 * ETH
 * USDT
 * VILA
