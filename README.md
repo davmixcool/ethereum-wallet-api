@@ -7,7 +7,7 @@ Ethereum Wallet API is a service that comprises of different endpoints for creat
 
 ## Requirements
 
-* Node v10 and above"
+* Node v10 and above
 
 ## Supported Wallet
 
@@ -39,6 +39,13 @@ First clone the repo and then `cd` into it.
 ### Install Modules
 
 `npm install`
+
+
+### Configuration
+
+This api service uses `http://localhost:8545` as its default provider.
+
+Configuration is located in `./common/config.js`
 
 
 ### Start the service
