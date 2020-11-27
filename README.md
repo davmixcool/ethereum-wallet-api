@@ -23,9 +23,10 @@ Ethereum Wallet API is a service that comprises of different endpoints for creat
 
 * Create Wallet
 * Unlock Wallet
-* Get Token Info
 * Get Wallet Balance
 * Get Wallet Transactions
+* Get Gas Suggestions
+* Get Token Info
 * Transfer Token
 
 
