@@ -8,6 +8,7 @@ var indexRouter = require('./routes/index');
 var ethereumRouter = require('./routes/ethereum');
 var vilaRouter = require('./routes/vila');
 var usdtRouter = require('./routes/usdt');
+var ngnsRouter = require('./routes/ngns');
 const swaggerJSDoc = require('swagger-jsdoc');
 
 
@@ -27,6 +28,7 @@ app.use('/', indexRouter);
 app.use('/ethereum', ethereumRouter);
 app.use('/vila', vilaRouter);
 app.use('/usdt', usdtRouter);
+app.use('/ngns', ngnsRouter);
 
 
 // -- setup up swagger-jsdoc --
@@ -43,7 +45,8 @@ const options = {
   swaggerDefinition,
   apis : ['./routes/ethereum.js',
         './routes/vila.js',
-        './routes/usdt.js'
+        './routes/usdt.js',
+        './routes/ngns.js'
   ]
   //apis: [path.resolve(__dirname, 'ethereum.js')],
 };

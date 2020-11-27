@@ -2,7 +2,12 @@ const Web3 = require('web3');
 const Config = require('../common/config');
 const web3 = new Web3(new Web3.providers.HttpProvider(Config.RpcProvider));
 const Tx = require('ethereumjs-tx');
-const Utils = require('../common/utils')
+const Service = require('../common/services')
+const axios = require('axios')
+
+const defaultOptions = {
+	useFallback: false,
+}
 
 exports.getInfo = (Contract) => {
 
@@ -28,19 +33,29 @@ exports.getInfo = (Contract) => {
 	}
 }
 
-exports.getBalance =  (Contract) => {
+exports.getBalance = (Contract,options=defaultOptions) => {
+	options = { ...defaultOptions, ...options }
+	const ContractX = Contract
 	return async (req, res, next) => {
+		
+
 		try{
 			
+			let balance = 0;
+
 			const address = req.body.address;
 
-		    const contract = new web3.eth.Contract(Contract.ABI, Contract.Address, {
-		        from: address
-		    });
-		    // How many tokens do I have before sending?
-		    const balanceWei = await contract.methods.balanceOf(address).call();
-	  		const balance = web3.utils.fromWei(balanceWei, 'ether')
+		    const contract = new web3.eth.Contract(Contract.ABI, Contract.Address);
 
+		    if(options.useFallback){
+		    	const balanceWei =  await Service.getTokenBalance(Contract,address);
+		    	balance = web3.utils.fromWei(balanceWei, 'ether');
+		    	
+		    }else{
+		    	const balanceWei = await contract.methods.balanceOf(address).call({from: address });
+	  			balance = web3.utils.fromWei(balanceWei, 'ether');
+		    }
+		   
 			res.json({
 				status:200,
 				amount: balance,	
@@ -60,7 +75,8 @@ exports.getBalance =  (Contract) => {
 }
 
 
-exports.transferTo =  (Contract) => {
+exports.transferTo =  (Contract,options=defaultOptions) => {
+	options = { ...defaultOptions, ...options }
 	return async (req, res, next) => {
 		// private key of token holder
 		const privateKey = req.body.private_key;
@@ -94,12 +110,16 @@ exports.transferTo =  (Contract) => {
 		        from: from_address
 		    });
 		    // How many tokens do I have before sending?
-		    var balance = await contract.methods.balanceOf(from_address).call();
+		    if(options.useFallback){
+		    	var balance =  await Service.getTokenBalance(Contract,from_address);
+		    }else{
+	  			var balance = await contract.methods.balanceOf(from_address).call({from: from_address });
+		    }
 		   
 		    console.log(`Balance before send: ${web3.utils.fromWei(balance, 'ether')} TOKEN\n------------------------`);
 		    // I chose gas price and gas limit based on what ethereum wallet was recommending for a similar transaction. You may need to change the gas price!
 		    // Use Gwei for the unit of gas price
-		    let gasPrices = await Utils.getCurrentGasPrices();
+		    let gasPrices = await Service.getCurrentGasPrices();
 
 		    if (gasPrice == null) {
 			    var gasPriceGwei = web3.utils.toWei(gasPrices.standard,'gwei');
@@ -131,7 +151,11 @@ exports.transferTo =  (Contract) => {
 		    // The receipt info of transaction, Uncomment for debug
 		    console.log(`Receipt info: \n${JSON.stringify(receipt, null, '\t')}\n------------------------`);
 		    // The balance may not be updated yet, but let's check
-		    balance = await contract.methods.balanceOf(from_address).call();
+		    if(options.useFallback){
+		    	var balance =  await Service.getTokenBalance(Contract,from_address);
+		    }else{
+	  			var balance = await contract.methods.balanceOf(from_address).call({from: from_address });
+		    }
 		    console.log(`Balance after send: ${web3.utils.fromWei(balance, 'ether')} TOKEN`);
 
 		    res.json({

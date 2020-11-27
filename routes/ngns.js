@@ -1,14 +1,14 @@
 var express = require('express');
 const ERC20Controller = require('../controllers/ERC20Controller');
-const Contract = require('../contracts/vila');
+const Contract = require('../contracts/ngns');
 var router = express.Router();
 
 /**
  * @swagger
- * /vila/info:
+ * /ngns/info:
  *   get:
- *     summary: Get VILA Token Info
- *     description: Get Details of the VILA Token
+ *     summary: Get NGNS Token Info
+ *     description: Get Details of the NGNS Token
  *  
  *     responses:
  *       200:
@@ -36,10 +36,10 @@ router.get('/info', ERC20Controller.getInfo(Contract));
 
 /**
  * @swagger
- * /vila/balance:
+ * /ngns/balance:
  *   get:
- *     summary: Get VILA Token Balance
- *     description: Get the VILA Token Balance of An Address
+ *     summary: Get NGNS Token Balance
+ *     description: Get the NGNS Token Balance of An Address
  *  
  *     parameters:
  *       - in: query
@@ -58,15 +58,15 @@ router.get('/info', ERC20Controller.getInfo(Contract));
  *               type: integer
  *               description: The balance of the account
  */
-router.get('/balance', ERC20Controller.getBalance(Contract,{ useFallback: false }));
+router.get('/balance', ERC20Controller.getBalance(Contract));
 
 
 /**
  * @swagger
- * /vila/transfer:
+ * /ngns/transfer:
  *   post:
- *     summary: Transfer VILA Token
- *     description: Transfer VILA Token To An Address
+ *     summary: Transfer NGNS Token
+ *     description: Transfer NGNS Token To An Address
  *
  *     parameters:
  *       - in: query
@@ -74,25 +74,25 @@ router.get('/balance', ERC20Controller.getBalance(Contract,{ useFallback: false 
  *         schema:
  *          type: string
  *         required: true
- *         description: The private key of the VILA token holder.
+ *         description: The private key of the NGNS token holder.
  *       - in: query
  *         name: from_address
  *         schema:
  *          type: string
  *         required: true
- *         description: The address that holds the VILA token.
+ *         description: The address that holds the NGNS token.
  *       - in: query
  *         name: to_address
  *         schema:
  *          type: string
  *         required: true
- *         description:  The address you want to send the VILA token to.
+ *         description:  The address you want to send the NGNS token to.
  *       - in: query
  *         name: amount
  *         schema:
  *          type: integer
  *         required: true
- *         description: The amount of VILA you want to send.
+ *         description: The amount of NGNS you want to send.
  *       - in: query
  *         name: gas_price
  *         schema:
@@ -121,7 +121,7 @@ router.get('/balance', ERC20Controller.getBalance(Contract,{ useFallback: false 
  *               type: object
  *               description: The receipt of the transaction
  */
-router.post('/transfer', ERC20Controller.transferTo(Contract,{ useFallback: false }));
+router.post('/transfer', ERC20Controller.transferTo(Contract));
 
 
 

@@ -77,7 +77,7 @@ router.post('/unlock/account', EthereumController.unlockAccount);
  * @swagger
  * /ethereum/gas:
  *   get:
- *     summary: Get Ethereum Gas
+ *     summary: Get Gas Suggestions
  *     description: Get the Ethereum current Gas prices and Limit
  *  
  *     responses:

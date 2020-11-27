@@ -2,8 +2,7 @@ const Web3 = require('web3');
 const Config = require('../common/config');
 const web3 = new Web3(new Web3.providers.HttpProvider(Config.RpcProvider));
 const Tx = require('ethereumjs-tx');
-const Utils = require('../common/utils')
-
+const Service = require('../common/services')
 
 exports.createAccount = (req, res, next) => {
 
@@ -99,7 +98,7 @@ exports.getBalance = async (req, res, next) => {
 		
 		const address = req.body.address;
 
-	  	const balanceWei = await web3.eth.getBalance(address).toNumber()
+	  	const balanceWei = await web3.eth.getBalance(address)
   		const balance = web3.utils.fromWei(balanceWei, 'ether')
 
 		res.json({
@@ -124,7 +123,7 @@ exports.getBalance = async (req, res, next) => {
 exports.getGas = async (req, res, next) => {
 	try{
 		
-		let gasPrices = await Utils.getCurrentGasPrices();
+		let gasPrices = await Service.getCurrentGasPrices();
 
 		let block = await web3.eth.getBlock("latest");
 
@@ -182,7 +181,7 @@ exports.transferTo = async (req, res, next) => {
 	    console.log(`Balance before send: ${web3.utils.fromWei(balance, 'ether')} ETH\n------------------------`);
 	    // I chose gas price and gas limit based on what ethereum wallet was recommending for a similar transaction. You may need to change the gas price!
 	    // Use Gwei for the unit of gas price
-	    let gasPrices = await Utils.getCurrentGasPrices();
+	    let gasPrices = await Service.getCurrentGasPrices();
 
 	    if (gasPrice == null) {
 		    var gasPriceGwei = web3.utils.toWei(gasPrices.standard,'gwei');
