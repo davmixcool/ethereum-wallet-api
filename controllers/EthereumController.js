@@ -119,8 +119,120 @@ exports.getBalance = async (req, res, next) => {
 	}
 }
 
-exports.transferTo = (req, res, next) => {
 
+
+exports.getGas = async (req, res, next) => {
+	try{
+		
+		let gasPrices = await Utils.getCurrentGasPrices();
+
+		let block = await web3.eth.getBlock("latest");
+
+		res.json({
+			status:200,
+			gas: { prices: await gasPrices,	limit: 21000 }
+		});
+		res.end();
+	}
+	catch(err){
+		console.log("Err getting gas",err)
+		res.json({
+			status:500,
+			message:"Err getting gas",
+			data:err
+		});
+		res.end();
+	}
+}
+
+
+
+exports.transferTo = async (req, res, next) => {
+	// private key of token holder
+	const privateKey = req.body.private_key;
+
+	// Who holds the token now?
+	const from_address = req.body.from_address;
+
+	// Who are we trying to send this token to?
+	const to_address = req.body.to_address;
+
+	let amount = req.body.amount;
+
+	// Gas price specifies the amount of ether you are willing to pay for each unit of gas (Gwei)
+	let gasPrice = req.body.gas_price;
+
+	//The maximum amount of units of gas you are will to send
+	let gasLimit = req.body.gas_limit;
+
+
+	if (gasLimit == null) {
+	    gasLimit = 21000;
+  	}
+
+	try{
+
+	    // Determine the nonce
+	    var count = await web3.eth.getTransactionCount(from_address);
+	    console.log(`num transactions so far: ${count}`);
+	   
+	    // How many tokens do I have before sending?
+	    var balance = await web3.eth.getBalance(address).toNumber();
+
+	    console.log(`Balance before send: ${web3.utils.fromWei(balance, 'ether')} ETH\n------------------------`);
+	    // I chose gas price and gas limit based on what ethereum wallet was recommending for a similar transaction. You may need to change the gas price!
+	    // Use Gwei for the unit of gas price
+	    let gasPrices = await Utils.getCurrentGasPrices();
+
+	    if (gasPrice == null) {
+		    var gasPriceGwei = web3.utils.toWei(gasPrices.standard,'gwei');
+	  	}else{
+	  		var gasPriceGwei = web3.utils.toWei(gasPrice,'gwei');
+	  	}
+
+	    // Chain ID for Main Net
+	    var chainId = 1;
+	    var rawTransaction = {
+	        "from": from_address,
+	        "nonce": "0x" + count.toString(16),
+	        "gasPrice": web3.utils.toHex(gasPriceGwei),
+	        "gasLimit": web3.utils.toHex(gasLimit),
+	        "to": to_address,
+	        "value": web3.utils.toHex(web3.utils.toWei(amount, 'ether')),
+	        "chainId": chainId
+	    };
+	    console.log(`Raw of Transaction: \n${JSON.stringify(rawTransaction, null, '\t')}\n------------------------`);
+	    // The private key for from_address in .env
+	    var privKey = new Buffer(privateKey, 'hex');
+	    var tx = new Tx(rawTransaction);
+	    tx.sign(privKey);
+	    var serializedTx = tx.serialize();
+	    // Comment out these four lines if you don't really want to send the TX right now
+	    console.log(`Attempting to send signed tx:  ${serializedTx.toString('hex')}\n------------------------`);
+	    var receipt = await web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'));
+	    // The receipt info of transaction, Uncomment for debug
+	    console.log(`Receipt info: \n${JSON.stringify(receipt, null, '\t')}\n------------------------`);
+	    // The balance may not be updated yet, but let's check
+	    balance = await web3.eth.getBalance(address).toNumber();
+	    console.log(`Balance after send: ${web3.utils.fromWei(balance, 'ether')} ETH`);
+
+	    res.json({
+			status:200,
+			balance: web3.utils.fromWei(balance, 'ether'),	
+			receipt: receipt,
+		});
+		res.end();
+
+ 	}
+	catch(err){
+		console.log("Err getting balance",err)
+		res.json({
+			status:500,
+			message:"Err getting balance",
+			data:err
+		});
+		res.end();
+	}
 }
 
 
@@ -201,7 +313,7 @@ exports.transactions = async (req, res, next) => {
 		  console.log("Searching block " + i);
 		}
 		var block = await web3.eth.getBlock(i, true);
-		console.log(block);
+
 		if (block != null && block.transactions != null) {
 		  block.transactions.forEach( function(e) {
 		    if (address == "*" || address == e.from || address == e.to) {
@@ -221,18 +333,6 @@ exports.transactions = async (req, res, next) => {
 			        input           : e.input
 	        	});
 
-		      	console.log("  tx hash          : " + e.hash + "\n"
-		        + "   nonce           : " + e.nonce + "\n"
-		        + "   blockHash       : " + e.blockHash + "\n"
-		        + "   blockNumber     : " + e.blockNumber + "\n"
-		        + "   transactionIndex: " + e.transactionIndex + "\n"
-		        + "   from            : " + e.from + "\n" 
-		        + "   to              : " + e.to + "\n"
-		        + "   value           : " + e.value + "\n"
-		        + "   time            : " + block.timestamp + " " + new Date(block.timestamp * 1000).toGMTString() + "\n"
-		        + "   gasPrice        : " + e.gasPrice + "\n"
-		        + "   gas             : " + e.gas + "\n"
-		        + "   input           : " + e.input);
 		    }
 		  })
 		}

@@ -71,12 +71,19 @@ exports.transferTo =  (Contract) => {
 		// Who are we trying to send this token to?
 		const to_address = req.body.to_address;
 
-		 // Blockvila Token (VILA) is divisible to 18 decimal places, 1 = 0.000000000000000001 of VILA
-		const amount = req.body.amount;
+		let amount = req.body.amount;
 
-		const gasPrice = req.body.gas_price;
+		// Gas price specifies the amount of ether you are willing to pay for each unit of gas (Gwei)
+		let gasPrice = req.body.gas_price;
 
-		
+		//The maximum amount of units of gas you are will to send
+		let gasLimit = req.body.gas_limit;
+
+
+		if (gasLimit == null) {
+		    gasLimit = 21000;
+	  	}
+
 		try{
 
 		    // Determine the nonce
@@ -89,19 +96,24 @@ exports.transferTo =  (Contract) => {
 		    // How many tokens do I have before sending?
 		    var balance = await contract.methods.balanceOf(from_address).call();
 		   
-		    console.log(`Balance before send: ${web3.utils.fromWei(balance, 'ether')} VILA\n------------------------`);
+		    console.log(`Balance before send: ${web3.utils.fromWei(balance, 'ether')} TOKEN\n------------------------`);
 		    // I chose gas price and gas limit based on what ethereum wallet was recommending for a similar transaction. You may need to change the gas price!
 		    // Use Gwei for the unit of gas price
 		    let gasPrices = await Utils.getCurrentGasPrices();
-		    var gasPriceGwei = web3.utils.toWei(gasPrices.low,'gwei');
-		    //var gasLimit = 3000000;
+
+		    if (gasPrice == null) {
+			    var gasPriceGwei = web3.utils.toWei(gasPrices.standard,'gwei');
+		  	}else{
+		  		var gasPriceGwei = web3.utils.toWei(gasPrice,'gwei');
+		  	}
+
 		    // Chain ID for Main Net
 		    var chainId = 1;
 		    var rawTransaction = {
 		        "from": from_address,
 		        "nonce": "0x" + count.toString(16),
 		        "gasPrice": web3.utils.toHex(gasPriceGwei),
-		        //"gasLimit": web3.utils.toHex(gasLimit),
+		        "gasLimit": web3.utils.toHex(gasLimit),
 		        "to": Contract.Address,
 		        "value": "0x0",
 		        "data": contract.methods.transfer(to_address, amount).encodeABI(),
@@ -120,7 +132,7 @@ exports.transferTo =  (Contract) => {
 		    console.log(`Receipt info: \n${JSON.stringify(receipt, null, '\t')}\n------------------------`);
 		    // The balance may not be updated yet, but let's check
 		    balance = await contract.methods.balanceOf(from_address).call();
-		    console.log(`Balance after send: ${web3.utils.fromWei(balance, 'ether')} VILA`);
+		    console.log(`Balance after send: ${web3.utils.fromWei(balance, 'ether')} TOKEN`);
 
 		    res.json({
 				status:200,

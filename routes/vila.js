@@ -67,7 +67,59 @@ router.get('/balance', ERC20Controller.getBalance(Contract));
  *   post:
  *     summary: Transfer VILA Token
  *     description: Transfer VILA Token To An Address
- *  
+ *
+ *     parameters:
+ *       - in: query
+ *         name: private_key
+ *         schema:
+ *          type: string
+ *         required: true
+ *         description: The private key of the VILA token holder.
+ *       - in: query
+ *         name: from_address
+ *         schema:
+ *          type: string
+ *         required: true
+ *         description: The address that holds the VILA token.
+ *       - in: query
+ *         name: to_address
+ *         schema:
+ *          type: string
+ *         required: true
+ *         description:  The address you want to send the VILA token to.
+ *       - in: query
+ *         name: amount
+ *         schema:
+ *          type: integer
+ *         required: true
+ *         description: The amount of VILA you want to send.
+ *       - in: query
+ *         name: gas_price
+ *         schema:
+ *          type: integer
+ *         required: true
+ *         description: The amount of ether you are willing to pay for each unit of gas in (Gwei).
+ *       - in: query
+ *         name: gas_limit
+ *         schema:
+ *          type: integer
+ *          default: 21000
+ *         required: true
+ *         description: The maximum amount of units of gas you are will to send.
+ *     responses:
+ *       200:
+ *         description: A object containing the balance and receipt of the transaction
+ *         content:
+ *           application/json:
+ *         schema:
+ *           type: object
+ *           properties:
+ *             balance:
+ *               type: integer
+ *               description: The balance of the address holder after transfer
+ *             receipt:
+ *               type: object
+ *               description: The receipt of the transaction
  */
 router.post('/transfer', ERC20Controller.transferTo(Contract));
 
