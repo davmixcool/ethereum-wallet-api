@@ -14,6 +14,7 @@ Ethereum Wallet API is a service that comprises of different endpoints for creat
 * ETH
 * USDT
 * VILA
+* NGNS
 
 -- More coming soon.
 
@@ -43,7 +44,7 @@ First clone the repo and then `cd` into it.
 
 ### Configuration
 
-This api service uses `http://localhost:8545` as its default provider.
+This api service uses `http://localhost:8545` as its default RPC provider. You can change this to infura or any other.
 
 Configuration is located in `./common/config.js`
 
