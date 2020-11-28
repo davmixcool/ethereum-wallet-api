@@ -1,16 +1,21 @@
 var express = require('express');
 const ERC20Controller = require('../controllers/ERC20Controller');
-const Contract = require('../contracts/usdt');
 var router = express.Router();
-
+const { body } = require('express-validator');
 
 /**
  * @swagger
- * /usdt/info:
+ * /token/info:
  *   get:
- *     summary: Get USDT Token Info
- *     description: Get Details of the USDT Token
- *  
+ *     summary: Get Token Info
+ *     description: Get Details of the Token
+ * 
+ *     parameters:
+ *       - in: query
+ *         name: token
+ *         type: string
+ *         required: true
+ *         description: The token Symbol.
  *     responses:
  *       200:
  *         description: An object containing the token info is returned
@@ -25,28 +30,34 @@ var router = express.Router();
  *             name:
  *               type: string
  *               description: The Token Name
- *             contractAddress:
- *               type: string
- *               description: The Token Contract Address
  *             decimals:
  *               type: integer
  *               description: The Token Decimals.
+ *             contractAddress:
+ *               type: string
+ *               description: The Token Contract Address
  */
-router.get('/info', ERC20Controller.getInfo(Contract));
+router.get('/info', ERC20Controller.getInfo());
 
 
 /**
  * @swagger
- * /usdt/balance:
+ * /token/balance:
  *   get:
- *     summary: Get USDT Token Balance
- *     description: Get the USDT Token Balance of An Address
+ *     summary: Get Token Balance
+ *     description: Get the Token Balance of An Address
  *  
  *     parameters:
+ *       - in: query
+ *         name: token
+ *         type: string
+ *         required: true
+ *         description: The token Symbol.
  *       - in: query
  *         name: address
  *         type: string
  *         required: true
+ *         description: The address to get balance from.
  *     responses:
  *       200:
  *         description: A object containing the balance of the address
@@ -59,41 +70,46 @@ router.get('/info', ERC20Controller.getInfo(Contract));
  *               type: integer
  *               description: The balance of the account
  */
-router.get('/balance', ERC20Controller.getBalance(Contract));
+router.get('/balance', ERC20Controller.getBalance({ useFallback: false }));
 
 
 /**
  * @swagger
- * /usdt/transfer:
+ * /token/transfer:
  *   post:
- *     summary: Transfer USDT Token
- *     description: Transfer USDT Token To An Address
+ *     summary: Transfer Token
+ *     description: Transfer Token To An Address
  *
  *     parameters:
+ *       - in: query
+ *         name: token
+ *         type: string
+ *         required: true
+ *         description: The token Symbol.
  *       - in: query
  *         name: private_key
  *         schema:
  *          type: string
  *         required: true
- *         description: The private key of the USDT token holder.
+ *         description: The private key of the token holder.
  *       - in: query
  *         name: from_address
  *         schema:
  *          type: string
  *         required: true
- *         description: The address that holds the USDT token.
+ *         description: The address that holds the token.
  *       - in: query
  *         name: to_address
  *         schema:
  *          type: string
  *         required: true
- *         description:  The address you want to send the USDT token to.
+ *         description:  The address you want to send the token to.
  *       - in: query
  *         name: amount
  *         schema:
  *          type: integer
  *         required: true
- *         description: The amount of USDT you want to send.
+ *         description: The amount of token you want to send.
  *       - in: query
  *         name: gas_price
  *         schema:
@@ -105,7 +121,7 @@ router.get('/balance', ERC20Controller.getBalance(Contract));
  *         schema:
  *          type: integer
  *          default: 21000
- *         required: true
+ *         required: false
  *         description: The maximum amount of units of gas you are will to send.
  *     responses:
  *       200:
@@ -122,7 +138,9 @@ router.get('/balance', ERC20Controller.getBalance(Contract));
  *               type: object
  *               description: The receipt of the transaction
  */
-router.post('/transfer', ERC20Controller.transferTo(Contract));
+router.post('/transfer', ERC20Controller.transferTo({ useFallback: false }));
+
+
 
 
 module.exports = router;

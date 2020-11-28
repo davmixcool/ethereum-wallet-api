@@ -6,9 +6,7 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var ethereumRouter = require('./routes/ethereum');
-var vilaRouter = require('./routes/vila');
-var usdtRouter = require('./routes/usdt');
-var ngnsRouter = require('./routes/ngns');
+var tokenRouter = require('./routes/token');
 const swaggerJSDoc = require('swagger-jsdoc');
 
 
@@ -26,9 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/ethereum', ethereumRouter);
-app.use('/vila', vilaRouter);
-app.use('/usdt', usdtRouter);
-app.use('/ngns', ngnsRouter);
+app.use('/token', tokenRouter);
 
 
 // -- setup up swagger-jsdoc --
@@ -36,7 +32,7 @@ const swaggerDefinition = {
   info: {
     title: 'Ethereum Wallet API',
     version: '0.1.0',
-    description: 'Ethereum Wallet API',
+    description: 'Ethereum Wallet API is a service used for creating and managing an ethereum wallet using web3. \n\n\n\n Supported Wallets include: ETH, VILA, USDT, NGNS. \n\n\n\n  Supported ERC20 Token include: VILA, USDT, NGNS.',
   },
   host: 'localhost:3000',
   basePath: '/',
@@ -44,9 +40,7 @@ const swaggerDefinition = {
 const options = {
   swaggerDefinition,
   apis : ['./routes/ethereum.js',
-        './routes/vila.js',
-        './routes/usdt.js',
-        './routes/ngns.js'
+        './routes/token.js'
   ]
   //apis: [path.resolve(__dirname, 'ethereum.js')],
 };

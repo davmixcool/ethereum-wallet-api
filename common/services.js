@@ -27,7 +27,7 @@ exports.getCurrentGasPrices = async () => {
   return prices
 }
 
-exports.getTokenBalance = async (Contract,address) => {
+exports.getTokenBalance = async (contractAddress,address) => {
     if(Contract == null || address == null){
         return 0;
     }
@@ -37,7 +37,7 @@ exports.getTokenBalance = async (Contract,address) => {
       params: {
         module: 'account',
         action: 'tokenbalance',
-        contractaddress: Contract.Address,
+        contractaddress: contractAddress,
         address: address,
         tag: 'latest',
         apikey: Config.EtherScanKey 

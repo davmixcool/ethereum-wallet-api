@@ -1,7 +1,8 @@
 var express = require('express');
 var EthereumController = require('../controllers/EthereumController'); 
+const ERC20Controller = require('../controllers/ERC20Controller');
 var router = express.Router();
-
+const { body } = require('express-validator');
 
 
 /**
@@ -72,6 +73,26 @@ router.post('/create/account', EthereumController.createAccount);
 router.post('/unlock/account', EthereumController.unlockAccount);
 
 
+/**
+ * @swagger
+ * /erc20/tokens:
+ *   get:
+ *     summary: Get Supported ERC20 Tokens
+ *     description: Get the Supported ERC20 Tokens
+ *  
+ *     responses:
+ *       200:
+ *         description: An object containing the list of token symbols and their contract address is returned
+ *         content:
+ *           application/json:
+ *         schema:
+ *           type: object
+ *           properties:
+ *             tokens:
+ *               type: object
+ *               description: The list of supported tokens.
+ */
+router.get('/erc20/tokens', ERC20Controller.getSupportedTokens);
 
 /**
  * @swagger
@@ -234,7 +255,7 @@ router.get('/balance', EthereumController.getBalance);
  *         schema:
  *          type: integer
  *          default: 21000
- *         required: true
+ *         required: false
  *         description: The maximum amount of units of gas you are will to send.
  *     responses:
  *       200:

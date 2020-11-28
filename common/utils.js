@@ -1,10 +1,39 @@
-exports.isString = (s) => {
+const Web3 = require('web3');
+const Config = require('../common/config');
+const web3 = new Web3(new Web3.providers.HttpProvider(Config.RpcProvider));
+
+const isString = (s) => {
   return (typeof s === 'string' || s instanceof String)
 }
 
 exports.financial = (num,decimals) =>{
   return Number.parseFloat(num / 1 * decimals).toFixed(8);
 }
+
+exports.parseUnits = (value, unitName) => {
+
+    unitName = (unitName != null) ? unitName: 18;
+
+    if (typeof(value) !== "string") {
+         throw new Error("value must be a string", "value", value);
+    }
+
+    const units = web3.utils.unitMap;
+
+    const filteredObj = Object.keys(units).reduce((p, c) => {    
+      if (units[c].length == unitName+1) p[c] = units[c];
+      return p;
+    }, {});
+
+    const unitType = 10 ** unitName; 
+
+    const unitKey = Object.keys(filteredObj)[Object.values(filteredObj).indexOf(unitType.toString())];
+
+    let result = web3.utils.toWei(value,unitKey);
+
+    return result;
+}
+
 
 exports.toBaseUnit = (value, decimals, BN) => {
   if (!isString(value)) {

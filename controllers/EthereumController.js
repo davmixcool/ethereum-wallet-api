@@ -1,8 +1,12 @@
 const Web3 = require('web3');
 const Config = require('../common/config');
 const web3 = new Web3(new Web3.providers.HttpProvider(Config.RpcProvider));
-const Tx = require('ethereumjs-tx');
+const EthereumTx = require('ethereumjs-tx').Transaction;
 const Service = require('../common/services')
+const Utils = require('../common/utils')
+const isHexPrefixed = require('is-hex-prefixed');
+const stripHexPrefix = require('strip-hex-prefix');
+const { validationResult } = require('express-validator');
 
 exports.createAccount = (req, res, next) => {
 
@@ -28,7 +32,7 @@ exports.createAccount = (req, res, next) => {
 		console.log("Err creating account",err)
 		res.json({
 			status:500,
-			message:"Err creating account",
+			message:"Err creating account: "+err.message,
 			data:err
 		});
 		res.end();
@@ -57,7 +61,7 @@ exports.unlockAccount = (req, res, next) => {
 		console.log("Err unlocking account",err)
 		res.json({
 			status:500,
-			message:"Err unlocking account",
+			message:"Err unlocking account: "+err.message,
 			data:err
 		});
 		res.end();
@@ -85,7 +89,7 @@ exports.getInfo = (req, res, next) => {
 		console.log("Err getting token info",err)
 		res.json({
 			status:500,
-			message:"Err getting token info",
+			message:"Err getting token info: "+err.message,
 			data:err
 		});
 		res.end();
@@ -111,7 +115,7 @@ exports.getBalance = async (req, res, next) => {
 		console.log("Err getting balance",err)
 		res.json({
 			status:500,
-			message:"Err getting balance",
+			message:"Err getting balance: "+err.message,
 			data:err
 		});
 		res.end();
@@ -122,7 +126,6 @@ exports.getBalance = async (req, res, next) => {
 
 exports.getGas = async (req, res, next) => {
 	try{
-		
 		let gasPrices = await Service.getCurrentGasPrices();
 
 		let block = await web3.eth.getBlock("latest");
@@ -137,7 +140,7 @@ exports.getGas = async (req, res, next) => {
 		console.log("Err getting gas",err)
 		res.json({
 			status:500,
-			message:"Err getting gas",
+			message:"Err getting gas: "+err.message,
 			data:err
 		});
 		res.end();
@@ -148,7 +151,7 @@ exports.getGas = async (req, res, next) => {
 
 exports.transferTo = async (req, res, next) => {
 	// private key of token holder
-	const privateKey = req.body.private_key;
+	let privateKey = req.body.private_key;
 
 	// Who holds the token now?
 	const from_address = req.body.from_address;
@@ -166,7 +169,13 @@ exports.transferTo = async (req, res, next) => {
 
 
 	if (gasLimit == null) {
-	    gasLimit = 21000;
+		    gasLimit = 2204 * gasPrice + 21000;
+	  	}else{
+	  		gasLimit = 2204 * gasPrice + gasLimit;
+	  	}
+
+  	if(isHexPrefixed(privateKey)){
+  		privateKey = stripHexPrefix(privateKey);
   	}
 
 	try{
@@ -202,10 +211,12 @@ exports.transferTo = async (req, res, next) => {
 	    };
 	    console.log(`Raw of Transaction: \n${JSON.stringify(rawTransaction, null, '\t')}\n------------------------`);
 	    // The private key for from_address in .env
-	    var privKey = new Buffer(privateKey, 'hex');
-	    var tx = new Tx(rawTransaction);
-	    tx.sign(privKey);
-	    var serializedTx = tx.serialize();
+	    var privKey = Buffer.from(privateKey, 'hex');
+	    var transaction = new EthereumTx(rawTransaction);
+
+	    transaction.sign(privKey);
+
+	    var serializedTx = transaction.serialize();
 	    // Comment out these four lines if you don't really want to send the TX right now
 	    console.log(`Attempting to send signed tx:  ${serializedTx.toString('hex')}\n------------------------`);
 	    var receipt = await web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'));
@@ -224,10 +235,10 @@ exports.transferTo = async (req, res, next) => {
 
  	}
 	catch(err){
-		console.log("Err getting balance",err)
+		console.log("Err signing transaction",err)
 		res.json({
 			status:500,
-			message:"Err getting balance",
+			message:"Err signing transaction: "+err.message,
 			data:err
 		});
 		res.end();
