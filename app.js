@@ -3,7 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
+const Config = require('./common/config');
 var indexRouter = require('./routes/index');
 var ethereumRouter = require('./routes/ethereum');
 var tokenRouter = require('./routes/token');
@@ -22,10 +22,27 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/ethereum', ethereumRouter);
-app.use('/token', tokenRouter);
 
+const apiKeyAuth = (req, res, next) => {
+
+  console.log('Checking API KEY')
+
+  let apiKey = req.body.api_key;
+
+  if (!apiKey || apiKey != Config.ApiKey) {
+
+    res.status(401).json({
+      message:"Invalid API KEY",
+    });
+    res.end();
+
+  }else{
+
+    next()
+  }
+}
+
+app.use('/', indexRouter);
 
 // -- setup up swagger-jsdoc --
 const swaggerDefinition = {
@@ -52,6 +69,10 @@ app.get('/swagger.json', (req, res, next) => {
   res.send(swaggerSpec);
 });
 
+
+app.use(apiKeyAuth);
+app.use('/ethereum', ethereumRouter);
+app.use('/token', tokenRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

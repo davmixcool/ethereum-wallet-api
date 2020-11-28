@@ -17,11 +17,22 @@ const defaultOptions = {
 
 exports.getSupportedTokens = (req, res, next) => {
 
-	res.json({
-		status:200,
-		tokens: ERC20.Contracts,	
-	});
-	res.end();
+	try{
+
+		res.status(200).json({
+			tokens: ERC20.Contracts,	
+		});
+		res.end();
+
+	}
+	catch(err){
+		console.log("Err getting supported tokens",err)
+		res.status(500).json({
+			message:"Err getting supported tokens: "+err.message,
+			data:err
+		});
+		res.end();
+	}
 
 }
 
@@ -29,6 +40,14 @@ exports.getSupportedTokens = (req, res, next) => {
 exports.getInfo = () => {
 
 	return async (req, res, next) => {
+
+		const result = validationResult(req);
+		if (!result.isEmpty()) {
+			return res.status(400).json({ 
+				errors: result.array() 
+			});
+		}
+
 		try{
 
 			let token = req.body.token.toUpperCase();
@@ -44,16 +63,14 @@ exports.getInfo = () => {
 			const decimals = await contract.methods.decimals().call();
 			const symbol = await contract.methods.symbol().call();
 
-			res.json({
-				status:200,
+			res.status(200).json({
 				info: { name, symbol, decimals, contractAddress },	
 			});
 			res.end();
 		}
 		catch(err){
 			console.log("Err getting token info",err)
-			res.json({
-				status:500,
+			res.status(500).json({
 				message:"Err getting token info: "+err.message,
 				data:err
 			});
@@ -66,6 +83,13 @@ exports.getBalance = (options=defaultOptions) => {
 	options = { ...defaultOptions, ...options }
 	return async (req, res, next) => {
 		
+		const result = validationResult(req);
+		if (!result.isEmpty()) {
+			res.status(400).json({ 
+				errors: result.array() 
+			});
+			res.end();
+		}
 
 		try{
 			
@@ -91,16 +115,14 @@ exports.getBalance = (options=defaultOptions) => {
 	  			balance = web3.utils.fromWei(balanceWei, 'ether');
 		    }
 		   
-			res.json({
-				status:200,
+			res.status(200).json({
 				amount: balance,	
 			});
 			res.end();
 		}
 		catch(err){
 			console.log("Err getting balance",err)
-			res.json({
-				status:500,
+			res.status(500).json({
 				message:"Err getting balance: "+err.message,
 				data:err
 			});
@@ -113,6 +135,14 @@ exports.getBalance = (options=defaultOptions) => {
 exports.transferTo =  (options=defaultOptions) => {
 	options = { ...defaultOptions, ...options }
 	return async (req, res, next) => {
+
+		const result = validationResult(req);
+		if (!result.isEmpty()) {
+			res.status(400).json({ 
+				errors: result.array() 
+			});
+			res.end();
+		}
 
 		let token = req.body.token.toUpperCase();
 			
@@ -215,8 +245,7 @@ exports.transferTo =  (options=defaultOptions) => {
 		    }
 		    console.log(`Balance after send: ${web3.utils.fromWei(balance, 'ether')} TOKEN`);
 
-		    res.json({
-				status:200,
+		    res.status(200).json({
 				balance: web3.utils.fromWei(balance, 'ether'),	
 				receipt: receipt,
 			});
@@ -225,8 +254,7 @@ exports.transferTo =  (options=defaultOptions) => {
 	 	}
 		catch(err){
 			console.log("Err signing transaction",err)
-			res.json({
-				status:500,
+			res.status(500).json({
 				message:"Err signing transaction: "+err.message,
 				data:err
 			});

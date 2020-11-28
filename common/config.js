@@ -1,4 +1,5 @@
 const LocalRpcProvider = 'http://localhost:8545';
-const InfuraRpcProvider = 'https://mainnet.infura.io/v3/a9b7aeb6030c4dd19fc422220d5237e8';
-exports.RpcProvider = InfuraRpcProvider;
+const InfuraRpcProvider = '';
+exports.RpcProvider = LocalRpcProvider;
 exports.EtherScanKey = 'M3WPU63N74CM5SHPGS2UCICZUSF79BNV96';
+exports.ApiKey = '2UDB3dHF79h96yVVHvY6c6d51SEU501XwBj';

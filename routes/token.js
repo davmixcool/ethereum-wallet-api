@@ -1,7 +1,10 @@
 var express = require('express');
+const Web3 = require('web3');
+const Config = require('../common/config');
+const web3 = new Web3(new Web3.providers.HttpProvider(Config.RpcProvider));
 const ERC20Controller = require('../controllers/ERC20Controller');
 var router = express.Router();
-const { body } = require('express-validator');
+const { body, check } = require('express-validator');
 
 /**
  * @swagger
@@ -11,6 +14,11 @@ const { body } = require('express-validator');
  *     description: Get Details of the Token
  * 
  *     parameters:
+ *       - in: query
+ *         name: api_key
+ *         type: string
+ *         required: true
+ *         description: Your Api Key.    
  *       - in: query
  *         name: token
  *         type: string
@@ -37,7 +45,11 @@ const { body } = require('express-validator');
  *               type: string
  *               description: The Token Contract Address
  */
-router.get('/info', ERC20Controller.getInfo());
+router.get('/info', [
+
+  check('token').notEmpty().isLength({ min: 3, max: 4 }).withMessage('Invalid token Symbol'),
+
+], ERC20Controller.getInfo());
 
 
 /**
@@ -48,6 +60,11 @@ router.get('/info', ERC20Controller.getInfo());
  *     description: Get the Token Balance of An Address
  *  
  *     parameters:
+ *       - in: query
+ *         name: api_key
+ *         type: string
+ *         required: true
+ *         description: Your Api Key.    
  *       - in: query
  *         name: token
  *         type: string
@@ -70,7 +87,14 @@ router.get('/info', ERC20Controller.getInfo());
  *               type: integer
  *               description: The balance of the account
  */
-router.get('/balance', ERC20Controller.getBalance({ useFallback: false }));
+router.get('/balance', [
+
+  check('token').notEmpty().isLength({ min: 3, max: 4 }).withMessage('Invalid token Symbol'),
+  check('address').notEmpty().custom((value,{ req }) => {
+    return web3.utils.isAddress(req.body.address)
+  }).withMessage('Invalid Ethereum address'),
+
+],ERC20Controller.getBalance({ useFallback: false }));
 
 
 /**
@@ -81,6 +105,11 @@ router.get('/balance', ERC20Controller.getBalance({ useFallback: false }));
  *     description: Transfer Token To An Address
  *
  *     parameters:
+ *       - in: query
+ *         name: api_key
+ *         type: string
+ *         required: true
+ *         description: Your Api Key.    
  *       - in: query
  *         name: token
  *         type: string
@@ -138,7 +167,25 @@ router.get('/balance', ERC20Controller.getBalance({ useFallback: false }));
  *               type: object
  *               description: The receipt of the transaction
  */
-router.post('/transfer', ERC20Controller.transferTo({ useFallback: false }));
+router.post('/transfer', [
+
+  check('token').notEmpty().isLength({ min: 3, max: 4 }).withMessage('Invalid token Symbol'),
+
+  check('private_key').notEmpty(),
+
+  check('from_address').notEmpty().custom((value,{ req }) => {
+    return web3.utils.isAddress(req.body.from_address)
+  }).withMessage('Invalid Ethereum holder address'),
+
+  check('to_address').notEmpty().custom((value,{ req }) => {
+    return web3.utils.isAddress(req.body.to_address)
+  }).withMessage('Invalid Ethereum destination address'),
+
+  check('amount').notEmpty().withMessage('Invalid amount'),
+
+  check('gas_price').notEmpty().withMessage('Invalid gas price'),
+
+],ERC20Controller.transferTo({ useFallback: false }));
 
 
 

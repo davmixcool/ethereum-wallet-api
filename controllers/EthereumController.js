@@ -10,6 +10,14 @@ const { validationResult } = require('express-validator');
 
 exports.createAccount = (req, res, next) => {
 
+	const result = validationResult(req);
+	if (!result.isEmpty()) {
+		res.status(400).json({ 
+			errors: result.array() 
+		});
+		res.end();
+	}
+
 	try{
 		
 		const account = web3.eth.accounts.create();
@@ -20,8 +28,7 @@ exports.createAccount = (req, res, next) => {
 
 		const keystore = web3.eth.accounts.encrypt(private_key, passphrase);   //Get the keystore
 
-		res.json({
-			status:200,
+		res.status(200).json({
 			address: account.address,
 			privateKey: account.privateKey,
 			keystore: keystore,			
@@ -30,8 +37,7 @@ exports.createAccount = (req, res, next) => {
 	}
 	catch(err){
 		console.log("Err creating account",err)
-		res.json({
-			status:500,
+		res.status(500).json({
 			message:"Err creating account: "+err.message,
 			data:err
 		});
@@ -42,6 +48,14 @@ exports.createAccount = (req, res, next) => {
 
 
 exports.unlockAccount = (req, res, next) => {
+
+	const result = validationResult(req);
+	if (!result.isEmpty()) {
+		res.status(400).json({ 
+			errors: result.array() 
+		});
+		res.end();
+	}
 
 	try{
 		
@@ -54,13 +68,12 @@ exports.unlockAccount = (req, res, next) => {
 	  	// const account_signed = web3.eth.accounts.privateKeyToAccount(account.privateKey);
 	  	// web3.eth.accounts.wallet.add(account_signed);
 
-		res.json(account);
+		res.status(200).json(account);
 		res.end();
 	}
 	catch(err){
 		console.log("Err unlocking account",err)
-		res.json({
-			status:500,
+		res.status(500).json({
 			message:"Err unlocking account: "+err.message,
 			data:err
 		});
@@ -79,16 +92,14 @@ exports.getInfo = (req, res, next) => {
 		    decimals: 18,
 		};
 
-		res.json({
-			status:200,
+		res.status(200).json({
 			info: info,	
 		});
 		res.end();
 	}
 	catch(err){
 		console.log("Err getting token info",err)
-		res.json({
-			status:500,
+		res.status(500).json({
 			message:"Err getting token info: "+err.message,
 			data:err
 		});
@@ -98,6 +109,14 @@ exports.getInfo = (req, res, next) => {
 
 
 exports.getBalance = async (req, res, next) => {
+	const result = validationResult(req);
+	if (!result.isEmpty()) {
+		res.status(400).json({ 
+			errors: result.array() 
+		});
+		res.end();
+	}
+
 	try{
 		
 		const address = req.body.address;
@@ -105,16 +124,14 @@ exports.getBalance = async (req, res, next) => {
 	  	const balanceWei = await web3.eth.getBalance(address)
   		const balance = web3.utils.fromWei(balanceWei, 'ether')
 
-		res.json({
-			status:200,
+		res.status(200).json({
 			amount: balance,	
 		});
 		res.end();
 	}
 	catch(err){
 		console.log("Err getting balance",err)
-		res.json({
-			status:500,
+		res.status(500).json({
 			message:"Err getting balance: "+err.message,
 			data:err
 		});
@@ -130,16 +147,14 @@ exports.getGas = async (req, res, next) => {
 
 		let block = await web3.eth.getBlock("latest");
 
-		res.json({
-			status:200,
+		res.status(200).json({
 			gas: { prices: await gasPrices,	limit: 21000 }
 		});
 		res.end();
 	}
 	catch(err){
 		console.log("Err getting gas",err)
-		res.json({
-			status:500,
+		res.status(500).json({
 			message:"Err getting gas: "+err.message,
 			data:err
 		});
@@ -150,6 +165,15 @@ exports.getGas = async (req, res, next) => {
 
 
 exports.transferTo = async (req, res, next) => {
+
+	const result = validationResult(req);
+	if (!result.isEmpty()) {
+		res.status(400).json({ 
+			errors: result.array() 
+		});
+		res.end();
+	}
+
 	// private key of token holder
 	let privateKey = req.body.private_key;
 
@@ -226,8 +250,7 @@ exports.transferTo = async (req, res, next) => {
 	    balance = await web3.eth.getBalance(address).toNumber();
 	    console.log(`Balance after send: ${web3.utils.fromWei(balance, 'ether')} ETH`);
 
-	    res.json({
-			status:200,
+	    res.status(200).json({
 			balance: web3.utils.fromWei(balance, 'ether'),	
 			receipt: receipt,
 		});
@@ -236,8 +259,7 @@ exports.transferTo = async (req, res, next) => {
  	}
 	catch(err){
 		console.log("Err signing transaction",err)
-		res.json({
-			status:500,
+		res.status(500).json({
 			message:"Err signing transaction: "+err.message,
 			data:err
 		});
@@ -301,6 +323,14 @@ exports.transferTo = async (req, res, next) => {
 
 exports.transactions = async (req, res, next) => {
 
+	const result = validationResult(req);
+	if (!result.isEmpty()) {
+		res.status(400).json({ 
+			errors: result.array() 
+		});
+		res.end();
+	}
+		
 	const address = req.body.address;
 	let startBlockNumber  = req.body.startblock;
 	let endBlockNumber = req.body.endblock;
@@ -349,8 +379,7 @@ exports.transactions = async (req, res, next) => {
 
 	}
 
-    res.json({
-		status:200,
+    res.status(200).json({
 		transactions: await transactions,	
 	});
 	res.end();

@@ -1,8 +1,11 @@
 var express = require('express');
+const Web3 = require('web3');
+const Config = require('../common/config');
+const web3 = new Web3(new Web3.providers.HttpProvider(Config.RpcProvider));
 var EthereumController = require('../controllers/EthereumController'); 
 const ERC20Controller = require('../controllers/ERC20Controller');
 var router = express.Router();
-const { body } = require('express-validator');
+const { body, check } = require('express-validator');
 
 
 /**
@@ -13,6 +16,11 @@ const { body } = require('express-validator');
  *     description: Generate a New Ethereum Account Using a Password
  *  
  *     parameters:
+ *       - in: query
+ *         name: api_key
+ *         type: string
+ *         required: true
+ *         description: Your Api Key.
  *       - in: query
  *         name: password
  *         type: string
@@ -35,7 +43,11 @@ const { body } = require('express-validator');
  *               type: object
  *               description: The keystore for the newly generated account.
  */
-router.post('/create/account', EthereumController.createAccount);
+router.post('/create/account',[
+
+  check('password').notEmpty().isLength({ min: 6 }).withMessage('Invalid password. Password can not be less than 6 characters.'),
+
+], EthereumController.createAccount);
 
 
 
@@ -47,6 +59,11 @@ router.post('/create/account', EthereumController.createAccount);
  *     description: Unlock Ethereum account using a password and a keystore
  *  
  *     parameters:
+ *       - in: query
+ *         name: api_key
+ *         type: string
+ *         required: true
+ *         description: Your Api Key.
  *       - in: query
  *         name: password
  *         type: string
@@ -70,7 +87,13 @@ router.post('/create/account', EthereumController.createAccount);
  *               type: string
  *               description: The the privateKey for the account
  */
-router.post('/unlock/account', EthereumController.unlockAccount);
+router.post('/unlock/account',[
+
+  check('password').notEmpty().withMessage('Please provide your wallet password.'),
+
+  check('keystore').notEmpty().withMessage('Please provide your wallet keystore.'),
+
+], EthereumController.unlockAccount);
 
 
 /**
@@ -79,7 +102,13 @@ router.post('/unlock/account', EthereumController.unlockAccount);
  *   get:
  *     summary: Get Supported ERC20 Tokens
  *     description: Get the Supported ERC20 Tokens
- *  
+ *
+ *     parameters:
+ *       - in: query
+ *         name: api_key
+ *         type: string
+ *         required: true
+ *         description: Your Api Key.  
  *     responses:
  *       200:
  *         description: An object containing the list of token symbols and their contract address is returned
@@ -100,7 +129,13 @@ router.get('/erc20/tokens', ERC20Controller.getSupportedTokens);
  *   get:
  *     summary: Get Gas Suggestions
  *     description: Get the Ethereum current Gas prices and Limit
- *  
+ *
+ *     parameters:
+ *       - in: query
+ *         name: api_key
+ *         type: string
+ *         required: true
+ *         description: Your Api Key.  
  *     responses:
  *       200:
  *         description: An object containing the gas prices and limit info is returned
@@ -129,6 +164,11 @@ router.get('/gas', EthereumController.getGas);
  *  
  *     parameters:
  *       - in: query
+ *         name: api_key
+ *         type: string
+ *         required: true
+ *         description: Your Api Key.  
+ *       - in: query
  *         name: address
  *         type: string
  *         required: true
@@ -152,7 +192,13 @@ router.get('/gas', EthereumController.getGas);
  *               type: object
  *               description: The transactions found.
  */
-router.get('/transactions', EthereumController.transactions);
+router.get('/transactions', [
+
+  check('address').notEmpty().custom((value,{ req }) => {
+    return web3.utils.isAddress(req.body.address)
+  }).withMessage('Invalid Ethereum address'),
+
+], EthereumController.transactions);
 
 
 
@@ -162,7 +208,13 @@ router.get('/transactions', EthereumController.transactions);
  *   get:
  *     summary: Get ETH Info
  *     description: Get Details of ETH
- *  
+ *
+ *     parameters:
+ *       - in: query
+ *         name: api_key
+ *         type: string
+ *         required: true
+ *         description: Your Api Key.    
  *     responses:
  *       200:
  *         description: An object containing the token info is returned
@@ -192,6 +244,11 @@ router.get('/info', EthereumController.getInfo);
  *  
  *     parameters:
  *       - in: query
+ *         name: api_key
+ *         type: string
+ *         required: true
+ *         description: Your Api Key.    
+ *       - in: query
  *         name: address
  *         type: string
  *         required: true
@@ -207,7 +264,13 @@ router.get('/info', EthereumController.getInfo);
  *               type: integer
  *               description: The balance of the account
  */
-router.get('/balance', EthereumController.getBalance);
+router.get('/balance',[
+
+  check('address').notEmpty().custom((value,{ req }) => {
+    return web3.utils.isAddress(req.body.address)
+  }).withMessage('Invalid Ethereum address'),
+
+], EthereumController.getBalance);
 
 
 
@@ -220,6 +283,11 @@ router.get('/balance', EthereumController.getBalance);
  *     description: Transfer ETH To An Address
  *
  *     parameters:
+ *       - in: query
+ *         name: api_key
+ *         type: string
+ *         required: true
+ *         description: Your Api Key.    
  *       - in: query
  *         name: private_key
  *         schema:
@@ -272,7 +340,23 @@ router.get('/balance', EthereumController.getBalance);
  *               type: object
  *               description: The receipt of the transaction
  */
-router.post('/transfer', EthereumController.transferTo);
+router.post('/transfer', [
+
+  check('private_key').notEmpty(),
+
+  check('from_address').notEmpty().custom((value,{ req }) => {
+    return web3.utils.isAddress(req.body.from_address)
+  }).withMessage('Invalid Ethereum holder address'),
+
+  check('to_address').notEmpty().custom((value,{ req }) => {
+    return web3.utils.isAddress(req.body.to_address)
+  }).withMessage('Invalid Ethereum destination address'),
+
+  check('amount').notEmpty().withMessage('Invalid amount'),
+
+  check('gas_price').notEmpty().withMessage('Invalid gas price'),
+
+  ], EthereumController.transferTo);
 
 
 
