@@ -50,6 +50,13 @@ const swaggerDefinition = {
     title: 'Ethereum Wallet API',
     version: '0.1.0',
     description: 'Ethereum Wallet API is a service used for creating and managing an ethereum wallet using web3. \n\n\n\n Supported Wallets include: ETH, VILA, USDT, NGNS. \n\n\n\n  Supported ERC20 Token include: VILA, USDT, NGNS.',
+    "contact": {
+      "email": "hello@davidoti.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://github.com/davmixcool/ethereum-wallet-api/blob/master/LICENSE"
+    }
   },
   host: 'localhost:3000',
   basePath: '/',

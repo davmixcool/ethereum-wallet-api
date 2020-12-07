@@ -64,7 +64,7 @@ exports.getInfo = () => {
 			const symbol = await contract.methods.symbol().call();
 
 			res.status(200).json({
-				info: { name, symbol, decimals, contractAddress },	
+				name, symbol, decimals, contractAddress	
 			});
 			res.end();
 		}

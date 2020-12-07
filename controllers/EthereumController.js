@@ -92,9 +92,7 @@ exports.getInfo = (req, res, next) => {
 		    decimals: 18,
 		};
 
-		res.status(200).json({
-			info: info,	
-		});
+		res.status(200).json(info);
 		res.end();
 	}
 	catch(err){
@@ -148,7 +146,7 @@ exports.getGas = async (req, res, next) => {
 		let block = await web3.eth.getBlock("latest");
 
 		res.status(200).json({
-			gas: { prices: await gasPrices,	limit: 21000 }
+			prices: await gasPrices, limit: 21000 
 		});
 		res.end();
 	}
