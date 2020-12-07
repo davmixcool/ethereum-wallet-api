@@ -47,19 +47,51 @@ app.use('/', indexRouter);
 // -- setup up swagger-jsdoc --
 const swaggerDefinition = {
   info: {
-    title: 'Ethereum Wallet API',
-    version: '0.1.0',
-    description: 'Ethereum Wallet API is a service used for creating and managing an ethereum wallet using web3. \n\n\n\n Supported Wallets include: ETH, VILA, USDT, NGNS. \n\n\n\n  Supported ERC20 Token include: VILA, USDT, NGNS.',
-    "contact": {
-      "email": "hello@davidoti.com"
-    },
-    "license": {
-      "name": "MIT",
-      "url": "https://github.com/davmixcool/ethereum-wallet-api/blob/master/LICENSE"
-    }
+      sections:[
+        {"Introduction": "fdsfdsf"}
+      ],
+      title: 'Ethereum Wallet API',
+      description: "<h3>Supported Tokens</h3> ETH, VILA, USDT, NGNS, BNB, USDC, OKB, CRO, LEO, VEN, DAI, CEL, YFI, UNI, SNX, BUSD, PAX, LINK, OMG, BAT, NEXO, ZRX, BAND, LEND, TUSD <br><br>  <h3>Authentication:</h3> Ethapi offers one form of authentication which is an API Key. <br>",
+      version: '0.5.0',
+      "contact": {
+        "email": "hello@davidoti.com",
+        "name": "David Oti"
+      },
+      "license": {
+        "name": "MIT",
+        "url": "https://github.com/davmixcool/ethereum-wallet-api/blob/master/LICENSE"
+      },
+      "x-logo": {
+        "url": "images/logo.png",
+        "backgroundColor": "#FFFFFF",
+        "altText": "Ethereum Wallet"
+      }
   },
-  host: 'localhost:3000',
+  "x-tagGroups": [
+    {
+      "name": "API",
+      "tags": ['Ethereum','ERC20 token']
+    }
+  ],
+  "tags": [
+    {
+      "name": "Ethereum",
+      "description": "Create and manage an ethereum account"
+    },
+    {
+      "name": "ERC20 token",
+      "description": "Manage ERC20 Tokens"
+    }
+  ],
+  "servers":[
+    {
+      "url": "https://localhost:3000",
+      "description": "Development Server"
+    }
+  ],
+  //host: 'localhost:3000',
   basePath: '/',
+  hideHostname: true
 };
 const options = {
   swaggerDefinition,

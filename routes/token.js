@@ -10,9 +10,18 @@ const { body, check } = require('express-validator');
  * @swagger
  * /token/info:
  *   get:
+ *     tags:
+ *       - ERC20 token
  *     summary: Get Token Info
  *     description: Get Details of the Token
  *
+ *     x-codeSamples:
+ *       - lang: 'JavaScript'
+ *         source: |
+
+ *       - lang: PHP
+ *         source: |
+
  *     requestBody:
  *       content:
  *         application/json:
@@ -98,9 +107,18 @@ router.get('/info', [
  * @swagger
  * /token/balance:
  *   get:
+ *     tags:
+ *       - ERC20 token
  *     summary: Get Token Balance
  *     description: Get the Token Balance of An Address
  *
+ *     x-codeSamples:
+ *       - lang: 'JavaScript'
+ *         source: |
+
+ *       - lang: PHP
+ *         source: |
+
  *     requestBody:
  *       content:
  *         application/json:
@@ -185,9 +203,18 @@ router.get('/balance', [
  * @swagger
  * /token/transfer:
  *   post:
+ *     tags:
+ *       - ERC20 token
  *     summary: Transfer Token
  *     description: Transfer Token To An Address
  *
+ *     x-codeSamples:
+ *       - lang: 'JavaScript'
+ *         source: |
+
+ *       - lang: PHP
+ *         source: |
+
  *     requestBody:
  *       content:
  *         application/json:

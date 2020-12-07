@@ -1,29 +1,22 @@
-# Ethereum Wallet API
+<div align="center">
+  <img alt="ReDoc logo" src="https://raw.githubusercontent.com/davmixcool/ethereum-wallet-api/master/public/images/logo.png" width="300px" />
 
-Ethereum Wallet API is a service used for creating and managing an ethereum wallet using web3. 
+  Ethereum Wallet API is a service used for creating and managing an ethereum wallet using web3. 
 
+  [![GitHub license](https://img.shields.io/github/license/davmixcool/ethereum-wallet-api.svg)](https://github.com/davmixcool/ethereum-wallet-api/blob/master/LICENSE)  
 
-[![GitHub license](https://img.shields.io/github/license/davmixcool/ethereum-wallet-api.svg)](https://github.com/davmixcool/ethereum-wallet-api/blob/master/LICENSE)  [![GitHub issues](https://img.shields.io/github/issues/davmixcool/ethereum-wallet-api.svg)](https://github.com/davmixcool/ethereum-wallet-api/issues) 
+  [![GitHub issues](https://img.shields.io/github/issues/davmixcool/ethereum-wallet-api.svg)](https://github.com/davmixcool/ethereum-wallet-api/issues) 
+
+</div>
+
 
 ## Requirements
 
 * Node v10 and above
 
-## Supported Wallet
+## Supported Assets
 
-* ETH
-* USDT
-* VILA
-* NGNS
-
--- More coming soon.
-
-
-## Supported ERC20 Tokens
-
-* USDT
-* VILA
-* NGNS
+ETH, VILA, USDT, NGNS, BNB, USDC, OKB, CRO, LEO, VEN, DAI, CEL, YFI, UNI, SNX, BUSD, PAX, LINK, OMG, BAT, NEXO, ZRX, BAND, LEND, TUSD
 
 
 ## Features
@@ -63,16 +56,18 @@ Configuration is located in `./common/config.js`
 
 `node bin/www`
 
-## API Key
+### Authentication
 
-2UDB3dHF79h96yVVHvY6c6d51SEU501XwBj
+Ethapi offers one form of authentication which is an API Key.
+
+API Key: 2UDB3dHF79h96yVVHvY6c6d51SEU501XwBj
+
 
 ## API Documentation
 
 You can vist the API docs once the service has been started
 
 http://localhost:3000/docs
-
 
 
 

@@ -8,13 +8,23 @@ var router = express.Router();
 const { body, check } = require('express-validator');
 
 
+
 /**
  * @swagger
  * /ethereum/create/account:
  *   post:
+ *     tags:
+ *       - Ethereum
  *     summary: Create New Ethereum Account
  *     description: Generate a New Ethereum Account Using a Password
- * 
+ *
+ *     x-codeSamples:
+ *       - lang: 'JavaScript'
+ *         source: |
+
+ *       - lang: PHP
+ *         source: |
+ 
  *     requestBody:
  *       content:
  *         application/json:
@@ -119,9 +129,18 @@ router.post('/create/account',[
  * @swagger
  * /ethereum/unlock/account:
  *   post:
+ *     tags:
+ *       - Ethereum
  *     summary: Unlock Ethereum Account
  *     description: Unlock Ethereum account using a password and a keystore
  *
+ *     x-codeSamples:
+ *       - lang: 'JavaScript'
+ *         source: |
+
+ *       - lang: PHP
+ *         source: |
+
  *     requestBody:
  *       content:
  *         application/json:
@@ -230,9 +249,18 @@ router.post('/unlock/account',[
  * @swagger
  * /erc20/tokens:
  *   get:
+ *     tags:
+ *       - Ethereum
  *     summary: Get Supported ERC20 Tokens
  *     description: Get the Supported ERC20 Tokens
  *
+ *     x-codeSamples:
+ *       - lang: 'JavaScript'
+ *         source: |
+
+ *       - lang: PHP
+ *         source: |
+
  *     requestBody:
  *       content:
  *         application/json:
@@ -297,9 +325,18 @@ router.get('/erc20/tokens', ERC20Controller.getSupportedTokens);
  * @swagger
  * /ethereum/gas:
  *   get:
+ *     tags:
+ *       - Ethereum
  *     summary: Get Gas Suggestions
  *     description: Get the Ethereum current Gas prices and Limit
  *
+ *     x-codeSamples:
+ *       - lang: 'JavaScript'
+ *         source: |
+
+ *       - lang: PHP
+ *         source: |
+
  *     requestBody:
  *       content:
  *         application/json:
@@ -370,9 +407,18 @@ router.get('/gas', EthereumController.getGas);
  * @swagger
  * /ethereum/transactions:
  *   get:
+ *     tags:
+ *       - Ethereum
  *     summary: Get Transactions
  *     description: Get Transaction History of an Address
  *
+ *     x-codeSamples:
+ *       - lang: 'JavaScript'
+ *         source: |
+
+ *       - lang: PHP
+ *         source: |
+
  *     requestBody:
  *       content:
  *         application/json:
@@ -449,9 +495,18 @@ router.get('/transactions', [
  * @swagger
  * /ethereum/info:
  *   get:
+ *     tags:
+ *       - Ethereum
  *     summary: Get ETH Info
  *     description: Get Details of ETH
  *
+ *     x-codeSamples:
+ *       - lang: 'JavaScript'
+ *         source: |
+
+ *       - lang: PHP
+ *         source: |
+
  *     requestBody:
  *       content:
  *         application/json:
@@ -520,9 +575,18 @@ router.get('/info', EthereumController.getInfo);
  * @swagger
  * /ethereum/balance:
  *   get:
+ *     tags:
+ *       - Ethereum
  *     summary: Get ETH Balance
  *     description: Get the ETH Balance of An Address
  *
+ *     x-codeSamples:
+ *       - lang: 'JavaScript'
+ *         source: |
+
+ *       - lang: PHP
+ *         source: |
+
  *     requestBody:
  *       content:
  *         application/json:
@@ -599,9 +663,18 @@ router.get('/balance',[
  * @swagger
  * /ethereum/transfer:
  *   post:
+ *     tags:
+ *       - Ethereum
  *     summary: Transfer ETH
  *     description: Transfer ETH To An Address
  *
+ *     x-codeSamples:
+ *       - lang: 'JavaScript'
+ *         source: |
+
+ *       - lang: PHP
+ *         source: |
+
  *     requestBody:
  *       content:
  *         application/json:
