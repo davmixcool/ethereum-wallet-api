@@ -14,7 +14,7 @@
 
 ## Supported Assets
 
-ETH, VILA, USDT, NGNS, BNB, USDC, OKB, CRO, LEO, VEN, DAI, CEL, YFI, UNI, SNX, BUSD, PAX, LINK, OMG, BAT, NEXO, ZRX, BAND, LEND, TUSD
+ETH, VILA, USDT, NGNS, BNB, USDC, OKB, CRO, LEO, VEN, DAI, CEL, YFI, UNI, SNX, BUSD, PAX, LINK, OMG, BAT, NEXO, ZRX, BAND, LEND, TUSD, BKY
 
 
 ## Features
@@ -43,7 +43,7 @@ First clone the repo and then `cd` into it.
 
 ### Configuration
 
-This api service uses `http://localhost:8545` as its default RPC provider. You can change this to infura or any other.
+This api service uses `http://127.0.0.1:7545` as its default RPC provider. You can change this to infura or any other.
 
 Change ApiKey to your own key.
 
