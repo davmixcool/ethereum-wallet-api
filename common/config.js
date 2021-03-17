@@ -1,4 +1,4 @@
-const LocalRpcProvider = 'http://localhost:8545';
+const LocalRpcProvider = 'http://127.0.0.1:7545';
 const InfuraRpcProvider = '';
 exports.RpcProvider = LocalRpcProvider;
 exports.EtherScanKey = 'M3WPU63N74CM5SHPGS2UCICZUSF79BNV96';

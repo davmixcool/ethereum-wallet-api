@@ -8,9 +8,13 @@ var indexRouter = require('./routes/index');
 var ethereumRouter = require('./routes/ethereum');
 var tokenRouter = require('./routes/token');
 const swaggerJSDoc = require('swagger-jsdoc');
-
+var cors = require('cors')
+var bodyParser = require('body-parser')
 
 var app = express();
+
+app.use(cors());
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -25,11 +29,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 const apiKeyAuth = (req, res, next) => {
 
-  console.log('Checking API KEY')
+  //console.log('Checking API KEY',req.headers.authorization)
 
-  let apiKey = req.body.api_key;
+  let apiKey = req.headers.authorization;
 
-  if (!apiKey || apiKey != Config.ApiKey) {
+  if (!apiKey || apiKey != 'Bearer '+Config.ApiKey) {
 
     res.status(401).json({
       message:"Invalid API KEY",
@@ -47,11 +51,8 @@ app.use('/', indexRouter);
 // -- setup up swagger-jsdoc --
 const swaggerDefinition = {
   info: {
-      sections:[
-        {"Introduction": "fdsfdsf"}
-      ],
       title: 'Ethereum Wallet API',
-      description: "<h3>Supported Tokens</h3> ETH, VILA, USDT, NGNS, BNB, USDC, OKB, CRO, LEO, VEN, DAI, CEL, YFI, UNI, SNX, BUSD, PAX, LINK, OMG, BAT, NEXO, ZRX, BAND, LEND, TUSD <br><br>  <h3>Authentication:</h3> Ethapi offers one form of authentication which is an API Key. <br>",
+      description: "<h3>Supported Tokens</h3> ETH, VILA, USDT, NGNS, BNB, USDC, OKB, CRO, LEO, VEN, DAI, CEL, YFI, UNI, SNX, BUSD, PAX, LINK, OMG, BAT, NEXO, ZRX, BAND, LEND, TUSD, BKY <br><br>  <h3>Authentication:</h3> Ethapi offers one form of authentication which is an API Key. <br>",
       version: '0.5.0',
       "contact": {
         "email": "hello@davidoti.com",
@@ -89,9 +90,21 @@ const swaggerDefinition = {
       "description": "Development Server"
     }
   ],
-  //host: 'localhost:3000',
+  host: 'localhost:3000',
   basePath: '/',
-  hideHostname: true
+  hideHostname: true,
+  schemes: [
+    'http',
+    'https'
+  ],
+  securityDefinitions:{
+    Bearer:{
+      type: 'apiKey',
+      name: 'Authorization',
+      in: 'header',
+      required: true
+    }
+  }
 };
 const options = {
   swaggerDefinition,

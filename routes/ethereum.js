@@ -31,21 +31,13 @@ const { body, check } = require('express-validator');
  *           schema:      
  *             type: object
  *             properties:
- *               api_key:
- *                 type: string
  *               password:
  *                 type: string
  *             example:   
- *               api_key: 2UDB3dHF79h96yVVHvY6c6d51SEU501XwBj
  *               password: MyPassword
  *     produces:
  *      - "application/json" 
  *     parameters:
- *       - in: query
- *         name: api_key
- *         type: string
- *         required: true
- *         description: Your Api Key.
  *       - in: query
  *         name: password
  *         type: string
@@ -147,14 +139,11 @@ router.post('/create/account',[
  *           schema:      
  *             type: object
  *             properties:
- *               api_key:
- *                 type: string
  *               password:
  *                 type: string
  *               keystore:
  *                 type: object
  *             example:   
- *               api_key: 2UDB3dHF79h96yVVHvY6c6d51SEU501XwBj
  *               password: MyPassword
  *               keystore: {
  *                 "status": 200,
@@ -185,11 +174,6 @@ router.post('/create/account',[
  *     produces:
  *      - "application/json"   
  *     parameters:
- *       - in: query
- *         name: api_key
- *         type: string
- *         required: true
- *         description: Your Api Key.
  *       - in: query
  *         name: password
  *         type: string
@@ -261,24 +245,8 @@ router.post('/unlock/account',[
  *       - lang: PHP
  *         source: |
 
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:      
- *             type: object
- *             properties:
- *               api_key:
- *                 type: string
- *             example:   
- *               api_key: 2UDB3dHF79h96yVVHvY6c6d51SEU501XwBj
  *     produces:
  *      - "application/json" 
- *     parameters:
- *       - in: query
- *         name: api_key
- *         type: string
- *         required: true
- *         description: Your Api Key.  
  *     responses:
  *       200:
  *         description: An object containing the list of token symbols and their contract address is returned
@@ -337,24 +305,8 @@ router.get('/erc20/tokens', ERC20Controller.getSupportedTokens);
  *       - lang: PHP
  *         source: |
 
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:      
- *             type: object
- *             properties:
- *               api_key:
- *                 type: string
- *             example:   
- *               api_key: 2UDB3dHF79h96yVVHvY6c6d51SEU501XwBj
  *     produces:
  *      - "application/json" 
- *     parameters:
- *       - in: query
- *         name: api_key
- *         type: string
- *         required: true
- *         description: Your Api Key.  
  *     responses:
  *       200:
  *         description: An object containing the gas prices and limit info is returned
@@ -425,8 +377,6 @@ router.get('/gas', EthereumController.getGas);
  *           schema:      
  *             type: object
  *             properties:
- *               api_key:
- *                 type: string
  *               address:
  *                 type: string
  *               startblock:
@@ -434,18 +384,12 @@ router.get('/gas', EthereumController.getGas);
  *               endblock:
  *                 type: integer
  *             example:   
- *               api_key: 2UDB3dHF79h96yVVHvY6c6d51SEU501XwBj
  *               address: '0x4a9987320ee1A3E19A2Afc7214c2c823b1BAed4f'
  *               startblock: 1223288
  *               endblock: 13488883
  *     produces:
  *      - "application/json"   
  *     parameters:
- *       - in: query
- *         name: api_key
- *         type: string
- *         required: true
- *         description: Your Api Key.  
  *       - in: query
  *         name: address
  *         type: string
@@ -507,24 +451,8 @@ router.get('/transactions', [
  *       - lang: PHP
  *         source: |
 
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:      
- *             type: object
- *             properties:
- *               api_key:
- *                 type: string
- *             example:   
- *               api_key: 2UDB3dHF79h96yVVHvY6c6d51SEU501XwBj
  *     produces:
- *      - "application/json" 
- *     parameters:
- *       - in: query
- *         name: api_key
- *         type: string
- *         required: true
- *         description: Your Api Key.    
+ *      - "application/json"   
  *     responses:
  *       200:
  *         description: An object containing the token info is returned
@@ -593,21 +521,13 @@ router.get('/info', EthereumController.getInfo);
  *           schema:      
  *             type: object
  *             properties:
- *               api_key:
- *                 type: string
  *               address:
  *                 type: string
  *             example:   
- *               api_key: 2UDB3dHF79h96yVVHvY6c6d51SEU501XwBj
  *               address: '0x4a9987320ee1A3E19A2Afc7214c2c823b1BAed4f'
  *     produces:
  *      - "application/json"     
- *     parameters:
- *       - in: query
- *         name: api_key
- *         type: string
- *         required: true
- *         description: Your Api Key.    
+ *     parameters:   
  *       - in: query
  *         name: address
  *         type: string
@@ -681,8 +601,6 @@ router.get('/balance',[
  *           schema:      
  *             type: object
  *             properties:
- *               api_key:
- *                 type: string
  *               private_key:
  *                 type: string
  *               from_address:
@@ -696,7 +614,6 @@ router.get('/balance',[
  *               gas_limit:
  *                 type: integer
  *             example:   
- *               api_key: 2UDB3dHF79h96yVVHvY6c6d51SEU501XwBj
  *               private_key: '0x376209134b309433f2a29dd8bfdcab94ad5f238e57a8adc9d1e3acfffc1f3ae7'
  *               from_address: '0x4a9987320ee1A3E19A2Afc7214c2c823b1BAed4f'
  *               to_address: '0x4a78934568aa1A3C67A2Afc7214c2c823b1BBbe45'
@@ -705,12 +622,7 @@ router.get('/balance',[
  *               gas_limit: 21000
  *     produces:
  *      - "application/json"     
- *     parameters:
- *       - in: query
- *         name: api_key
- *         type: string
- *         required: true
- *         description: Your Api Key.    
+ *     parameters: 
  *       - in: query
  *         name: private_key
  *         schema:

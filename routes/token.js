@@ -28,21 +28,13 @@ const { body, check } = require('express-validator');
  *           schema:      
  *             type: object
  *             properties:
- *               api_key:
- *                 type: string
  *               token:
  *                 type: string
  *             example:   
- *               api_key: 2UDB3dHF79h96yVVHvY6c6d51SEU501XwBj
  *               token: USDT
  *     produces:
  *      - "application/json"  
- *     parameters:
- *       - in: query
- *         name: api_key
- *         type: string
- *         required: true
- *         description: Your Api Key.    
+ *     parameters:  
  *       - in: query
  *         name: token
  *         type: string
@@ -125,24 +117,16 @@ router.get('/info', [
  *           schema:      
  *             type: object
  *             properties:
- *               api_key:
- *                 type: string
  *               token:
  *                 type: string
  *               address:
  *                 type: string
  *             example:   
- *               api_key: 2UDB3dHF79h96yVVHvY6c6d51SEU501XwBj
  *               token: USDT
  *               address: '0x4a9987320ee1A3E19A2Afc7214c2c823b1BAed4f'
  *     produces:
  *      - "application/json"       
  *     parameters:
- *       - in: query
- *         name: api_key
- *         type: string
- *         required: true
- *         description: Your Api Key.    
  *       - in: query
  *         name: token
  *         type: string
@@ -221,8 +205,6 @@ router.get('/balance', [
  *           schema:      
  *             type: object
  *             properties:
- *               api_key:
- *                 type: string
  *               token:
  *                 type: string
  *               private_key:
@@ -238,7 +220,6 @@ router.get('/balance', [
  *               gas_limit:
  *                 type: integer
  *             example:   
- *               api_key: 2UDB3dHF79h96yVVHvY6c6d51SEU501XwBj
  *               token: USDT
  *               private_key: '0x376209134b309433f2a29dd8bfdcab94ad5f238e57a8adc9d1e3acfffc1f3ae7'
  *               from_address: '0x4a9987320ee1A3E19A2Afc7214c2c823b1BAed4f'
@@ -248,12 +229,7 @@ router.get('/balance', [
  *               gas_limit: 21000
  *     produces:
  *      - "application/json"     
- *     parameters:
- *       - in: query
- *         name: api_key
- *         type: string
- *         required: true
- *         description: Your Api Key.    
+ *     parameters:   
  *       - in: query
  *         name: token
  *         type: string
