@@ -1,8 +1,13 @@
 const Web3 = require('web3');
 const axios = require('axios')
 const log = require('ololog').configure({ time: true })
-const Config = require('../common/config');
-const web3 = new Web3(new Web3.providers.HttpProvider(Config.RpcProvider));
+require('../config/env');
+
+if (process.env.ETH_RPC_DRIVER == 'infura') {
+var web3 = new Web3(new Web3.providers.HttpProvider(process.env.ETH_INFURA_RPC_URL));
+}else{
+var web3 = new Web3(new Web3.providers.HttpProvider(process.env.ETH_CUSTOM_RPC_URL));  
+}
 
 /**
  * Fetch the current transaction gas prices from https://ethgasstation.info/
@@ -28,7 +33,7 @@ exports.getCurrentGasPrices = async () => {
 }
 
 exports.getTokenBalance = async (contractAddress,address) => {
-    if(Contract == null || address == null){
+    if(contractAddress == null || address == null){
         return 0;
     }
 
@@ -40,7 +45,7 @@ exports.getTokenBalance = async (contractAddress,address) => {
         contractaddress: contractAddress,
         address: address,
         tag: 'latest',
-        apikey: Config.EtherScanKey 
+        apikey: process.env.ETHER_SCAN_KEY
       }
     }
 

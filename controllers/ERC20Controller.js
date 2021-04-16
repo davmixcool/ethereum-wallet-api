@@ -1,6 +1,4 @@
 const Web3 = require('web3');
-const Config = require('../common/config');
-const web3 = new Web3(new Web3.providers.HttpProvider(Config.RpcProvider));
 const EthereumTx = require('ethereumjs-tx').Transaction;
 const Service = require('../common/services')
 const Utils = require('../common/utils')
@@ -9,6 +7,12 @@ const axios = require('axios')
 const isHexPrefixed = require('is-hex-prefixed');
 const stripHexPrefix = require('strip-hex-prefix');
 const { validationResult } = require('express-validator');
+
+if (process.env.ETH_RPC_DRIVER == 'infura') {
+var web3 = new Web3(new Web3.providers.HttpProvider(process.env.ETH_INFURA_RPC_URL));
+}else{
+var web3 = new Web3(new Web3.providers.HttpProvider(process.env.ETH_CUSTOM_RPC_URL));	
+}
 
 
 const defaultOptions = {
@@ -26,7 +30,7 @@ exports.getSupportedTokens = (req, res, next) => {
 
 	}
 	catch(err){
-		console.log("Err getting supported tokens",err)
+		//console.log("Err getting supported tokens",err)
 		res.status(500).json({
 			message:"Err getting supported tokens: "+err.message,
 			data:err
@@ -69,7 +73,7 @@ exports.getInfo = () => {
 			res.end();
 		}
 		catch(err){
-			console.log("Err getting token info",err)
+			//console.log("Err getting token info",err)
 			res.status(500).json({
 				message:"Err getting token info: "+err.message,
 				data:err
@@ -121,7 +125,7 @@ exports.getBalance = (options=defaultOptions) => {
 			res.end();
 		}
 		catch(err){
-			console.log("Err getting balance",err)
+			//console.log("Err getting balance",err)
 			res.status(500).json({
 				message:"Err getting balance: "+err.message,
 				data:err
@@ -170,9 +174,9 @@ exports.transferTo =  (options=defaultOptions) => {
 
 
 		if (gasLimit == null) {
-		    gasLimit = 2204 * gasPrice + 21000;
+		    gasLimit = 60000; //2204 * gasPrice + 21000;
 	  	}else{
-	  		gasLimit = 2204 * gasPrice + gasLimit;
+	  		gasLimit = gasLimit;//2204 * gasPrice + gasLimit;
 	  	}
 
 	  	if(isHexPrefixed(privateKey)){
@@ -183,7 +187,7 @@ exports.transferTo =  (options=defaultOptions) => {
 
 		    // Determine the nonce
 		    var count = await web3.eth.getTransactionCount(from_address);
-		    console.log(`num transactions so far: ${count}`);
+		    //console.log(`num transactions so far: ${count}`);
 		   
 		    var contract = new web3.eth.Contract(ERC20.ABI, ERC20.Contracts[token], {
 		        from: from_address
@@ -197,7 +201,13 @@ exports.transferTo =  (options=defaultOptions) => {
 
 		    const decimals = await contract.methods.decimals().call();
 		   
-		    console.log(`Balance before send: ${web3.utils.fromWei(balance, 'ether')} TOKEN\n------------------------`);
+		    //console.log(`Balance before send: ${web3.utils.fromWei(balance, 'ether')} TOKEN\n------------------------`);
+
+		    //console.log(`Amount to send: ${amount}`)
+
+		    if (web3.utils.fromWei(balance, 'ether') < parseFloat(amount)) {
+		    	throw new Error("Insufficient Balance");
+		    }
 		    // I chose gas price and gas limit based on what ethereum wallet was recommending for a similar transaction. You may need to change the gas price!
 		    // Use Gwei for the unit of gas price
 		    let gasPrices = await Service.getCurrentGasPrices();
@@ -223,27 +233,27 @@ exports.transferTo =  (options=defaultOptions) => {
 		        "data": contract.methods.transfer(to_address, amountToSend ).encodeABI(),
 		        "chainId": chainId
 		    };
-		    console.log(`Raw of Transaction: \n${JSON.stringify(rawTransaction, null, '\t')}\n------------------------`);
+		   // console.log(`Raw of Transaction: \n${JSON.stringify(rawTransaction, null, '\t')}\n------------------------`);
 		    // The private key for from_address in .env
 		    var privKey = Buffer.from(privateKey, 'hex');
-		    console.log(privKey)
+		    //console.log(privKey)
 		    var transaction = new EthereumTx(rawTransaction);
 		    
 		    transaction.sign(privKey);
 
 		    var serializedTx = transaction.serialize();
 		    // Comment out these four lines if you don't really want to send the TX right now
-		    console.log(`Attempting to send signed tx:  ${serializedTx.toString('hex')}\n------------------------`);
+		    //console.log(`Attempting to send signed tx:  ${serializedTx.toString('hex')}\n------------------------`);
 		    var receipt = await web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'));
 		    // The receipt info of transaction, Uncomment for debug
-		    console.log(`Receipt info: \n${JSON.stringify(receipt, null, '\t')}\n------------------------`);
+		    //console.log(`Receipt info: \n${JSON.stringify(receipt, null, '\t')}\n------------------------`);
 		    // The balance may not be updated yet, but let's check
 		    if(options.useFallback){
 		    	var balance =  await Service.getTokenBalance(ERC20.Contracts[token],from_address);
 		    }else{
 	  			var balance = await contract.methods.balanceOf(from_address).call({from: from_address });
 		    }
-		    console.log(`Balance after send: ${web3.utils.fromWei(balance, 'ether')} TOKEN`);
+		    //console.log(`Balance after send: ${web3.utils.fromWei(balance, 'ether')} TOKEN`);
 
 		    res.status(200).json({
 				balance: web3.utils.fromWei(balance, 'ether'),	
@@ -253,7 +263,7 @@ exports.transferTo =  (options=defaultOptions) => {
 
 	 	}
 		catch(err){
-			console.log("Err signing transaction",err)
+			//console.log("Err signing transaction",err)
 			res.status(500).json({
 				message:"Err signing transaction: "+err.message,
 				data:err

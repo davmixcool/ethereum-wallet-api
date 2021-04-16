@@ -3,13 +3,15 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-const Config = require('./common/config');
+//const Config = require('./common/config');
 var indexRouter = require('./routes/index');
 var ethereumRouter = require('./routes/ethereum');
 var tokenRouter = require('./routes/token');
 const swaggerJSDoc = require('swagger-jsdoc');
 var cors = require('cors')
 var bodyParser = require('body-parser')
+const watcher = require('./common/watcher')
+require('./config/env');
 
 var app = express();
 
@@ -29,11 +31,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 const apiKeyAuth = (req, res, next) => {
 
-  //console.log('Checking API KEY',req.headers.authorization)
-
   let apiKey = req.headers.authorization;
 
-  if (!apiKey || apiKey != 'Bearer '+Config.ApiKey) {
+  if (!apiKey || apiKey != 'Bearer '+process.env.API_KEY) {
 
     res.status(401).json({
       message:"Invalid API KEY",
@@ -46,13 +46,21 @@ const apiKeyAuth = (req, res, next) => {
   }
 }
 
+
+watcher.watchEtherTransfers()
+console.log('Started watching Ether transfers')
+
+watcher.watchTokenTransfers()
+console.log('Started watching token transfers\n')
+
+
 app.use('/', indexRouter);
 
 // -- setup up swagger-jsdoc --
 const swaggerDefinition = {
   info: {
       title: 'Ethereum Wallet API',
-      description: "<h3>Supported Tokens</h3> ETH, VILA, USDT, NGNS, BNB, USDC, OKB, CRO, LEO, VEN, DAI, CEL, YFI, UNI, SNX, BUSD, PAX, LINK, OMG, BAT, NEXO, ZRX, BAND, LEND, TUSD, BKY <br><br>  <h3>Authentication:</h3> Ethapi offers one form of authentication which is an API Key. <br>",
+      description: "<h3>Supported Coins</h3> ETH, VILA, USDT, NGNS, BNB, USDC, OKB, CRO, LEO, VEN, DAI, CEL, YFI, UNI, SNX, BUSD, PAX, LINK, OMG, BAT, NEXO, ZRX, BAND, LEND, TUSD, BKY <br><br>  <h3>Authentication:</h3> Ethapi offers one form of authentication which is an API Key. <br>",
       version: '0.5.0',
       "contact": {
         "email": "hello@davidoti.com",
@@ -85,12 +93,11 @@ const swaggerDefinition = {
     }
   ],
   "servers":[
-    {
-      "url": "https://localhost:3000",
-      "description": "Development Server"
-    }
+    // {
+    //   "url": "https://localhost:"+process.env.PORT,
+    //   "description": "Development Server"
+    // }
   ],
-  host: 'localhost:3000',
   basePath: '/',
   hideHostname: true,
   schemes: [
@@ -111,7 +118,6 @@ const options = {
   apis : ['./routes/ethereum.js',
         './routes/token.js'
   ]
-  //apis: [path.resolve(__dirname, 'ethereum.js')],
 };
 const swaggerSpec = swaggerJSDoc(options);
 

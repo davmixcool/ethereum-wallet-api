@@ -1,10 +1,13 @@
 var express = require('express');
 const Web3 = require('web3');
-const Config = require('../common/config');
-const web3 = new Web3(new Web3.providers.HttpProvider(Config.RpcProvider));
 const ERC20Controller = require('../controllers/ERC20Controller');
 var router = express.Router();
 const { body, check } = require('express-validator');
+if (process.env.ETH_RPC_DRIVER == 'infura') {
+var web3 = new Web3(new Web3.providers.HttpProvider(process.env.ETH_INFURA_RPC_URL));
+}else{
+var web3 = new Web3(new Web3.providers.HttpProvider(process.env.ETH_CUSTOM_RPC_URL));  
+}
 
 /**
  * @swagger
@@ -226,7 +229,7 @@ router.get('/balance', [
  *               to_address: '0x4a78934568aa1A3C67A2Afc7214c2c823b1BBbe45'
  *               amount: 34
  *               gas_price: 19
- *               gas_limit: 21000
+ *               gas_limit: 60000
  *     produces:
  *      - "application/json"     
  *     parameters:   
@@ -269,7 +272,7 @@ router.get('/balance', [
  *         name: gas_limit
  *         schema:
  *          type: integer
- *          default: 21000
+ *          default: 60000
  *         required: false
  *         description: The maximum amount of units of gas you are willing to send.
  *     responses:

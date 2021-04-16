@@ -1,11 +1,15 @@
 var express = require('express');
 const Web3 = require('web3');
-const Config = require('../common/config');
-const web3 = new Web3(new Web3.providers.HttpProvider(Config.RpcProvider));
 var EthereumController = require('../controllers/EthereumController'); 
 const ERC20Controller = require('../controllers/ERC20Controller');
 var router = express.Router();
 const { body, check } = require('express-validator');
+
+if (process.env.ETH_RPC_DRIVER == 'infura') {
+var web3 = new Web3(new Web3.providers.HttpProvider(process.env.ETH_INFURA_RPC_URL));
+}else{
+var web3 = new Web3(new Web3.providers.HttpProvider(process.env.ETH_CUSTOM_RPC_URL));	
+}
 
 
 
@@ -296,7 +300,7 @@ router.get('/erc20/tokens', ERC20Controller.getSupportedTokens);
  *     tags:
  *       - Ethereum
  *     summary: Get Gas Suggestions
- *     description: Get the Ethereum current Gas prices and Limit
+ *     description: Get the Ethereum current Gas prices and Limit for ETH or Token transfer
  *
  *     x-codeSamples:
  *       - lang: 'JavaScript'
@@ -305,6 +309,16 @@ router.get('/erc20/tokens', ERC20Controller.getSupportedTokens);
  *       - lang: PHP
  *         source: |
 
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:      
+ *             type: object
+ *             properties:
+ *               type:
+ *                 type: string
+ *             example:   
+ *               type: 'eth'
  *     produces:
  *      - "application/json" 
  *     responses:
@@ -319,10 +333,19 @@ router.get('/erc20/tokens', ERC20Controller.getSupportedTokens);
  *               type: object
  *               description: The current Gas prices raging from low, standard and fast.
  *               example: {
- *                   "low": 37,
- *                   "medium": 37,
- *                   "high": 42
- *               }
+			        "low": {
+			            "amount": 196,
+			            "eth": "0.004116"
+			        },
+			        "medium": {
+			            "amount": 238,
+			            "eth": "0.004998"
+			        },
+			        "high": {
+			            "amount": 274,
+			            "eth": "0.005754"
+			        }
+			    }
  *             limit:
  *               type: string
  *               description: The current Gas Limit

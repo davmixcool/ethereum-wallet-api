@@ -1,12 +1,19 @@
 const Web3 = require('web3');
-const Config = require('../common/config');
-const web3 = new Web3(new Web3.providers.HttpProvider(Config.RpcProvider));
 const EthereumTx = require('ethereumjs-tx').Transaction;
 const Service = require('../common/services')
 const Utils = require('../common/utils')
 const isHexPrefixed = require('is-hex-prefixed');
 const stripHexPrefix = require('strip-hex-prefix');
 const { validationResult } = require('express-validator');
+
+if (process.env.ETH_RPC_DRIVER == 'infura') {
+var web3 = new Web3(new Web3.providers.HttpProvider(process.env.ETH_INFURA_RPC_URL));
+}else{
+var web3 = new Web3(new Web3.providers.HttpProvider(process.env.ETH_CUSTOM_RPC_URL));	
+}
+
+
+
 
 exports.createAccount = (req, res, next) => {
 
@@ -64,9 +71,6 @@ exports.unlockAccount = (req, res, next) => {
 	  	const keystore = req.body.keystore;
 
 	  	const account = web3.eth.accounts.decrypt(keystore, password);
-
-	  	// const account_signed = web3.eth.accounts.privateKeyToAccount(account.privateKey);
-	  	// web3.eth.accounts.wallet.add(account_signed);
 
 		res.status(200).json(account);
 		res.end();
@@ -140,13 +144,43 @@ exports.getBalance = async (req, res, next) => {
 
 
 exports.getGas = async (req, res, next) => {
+
+	let type = req.body.type;
+
 	try{
 		let gasPrices = await Service.getCurrentGasPrices();
 
 		let block = await web3.eth.getBlock("latest");
 
+		let prices = await gasPrices;
+
+		let oneGwei = 0.000000001;
+
+		let gasLimit = (type == 'token')? 60000 : 21000;
+
+		let lowPriceToEth =  prices.low * oneGwei * gasLimit;
+
+		let mediumPriceToEth =  prices.medium * oneGwei * gasLimit;
+
+		let highPriceToEth =  prices.high * oneGwei * gasLimit;
+
+		let pricesWithEth = {
+			low: {
+				amount: prices.low,
+				eth: lowPriceToEth.toPrecision(4)
+			},
+			medium: {
+				amount: prices.medium,
+				eth: mediumPriceToEth.toPrecision(4)
+			},
+			high: {
+				amount: prices.high,
+				eth: highPriceToEth.toPrecision(4)
+			} 
+		}
+
 		res.status(200).json({
-			prices: await gasPrices, limit: 21000 
+			prices: pricesWithEth, limit: gasLimit 
 		});
 		res.end();
 	}
@@ -191,10 +225,10 @@ exports.transferTo = async (req, res, next) => {
 
 
 	if (gasLimit == null) {
-		    gasLimit = 2204 * gasPrice + 21000;
-	  	}else{
-	  		gasLimit = 2204 * gasPrice + gasLimit;
-	  	}
+	    gasLimit = 21000; //2204 * gasPrice + 21000;
+  	}else{
+  		gasLimit = gasLimit;//2204 * gasPrice + gasLimit;
+  	}
 
   	if(isHexPrefixed(privateKey)){
   		privateKey = stripHexPrefix(privateKey);
@@ -204,12 +238,16 @@ exports.transferTo = async (req, res, next) => {
 
 	    // Determine the nonce
 	    var count = await web3.eth.getTransactionCount(from_address);
-	    console.log(`num transactions so far: ${count}`);
+	    //console.log(`num transactions so far: ${count}`);
 	   
 	    // How many tokens do I have before sending?
-	    var balance = await web3.eth.getBalance(address).toNumber();
+	    var balance = await web3.eth.getBalance(from_address);
 
-	    console.log(`Balance before send: ${web3.utils.fromWei(balance, 'ether')} ETH\n------------------------`);
+	    //console.log(`Balance before send: ${web3.utils.fromWei(balance, 'ether')} ETH\n------------------------`);
+
+	    if (web3.utils.fromWei(balance, 'ether') < parseFloat(amount)) {
+	    	throw new Error("Insufficient Balance");
+	    }
 	    // I chose gas price and gas limit based on what ethereum wallet was recommending for a similar transaction. You may need to change the gas price!
 	    // Use Gwei for the unit of gas price
 	    let gasPrices = await Service.getCurrentGasPrices();
@@ -231,7 +269,7 @@ exports.transferTo = async (req, res, next) => {
 	        "value": web3.utils.toHex(web3.utils.toWei(amount, 'ether')),
 	        "chainId": chainId
 	    };
-	    console.log(`Raw of Transaction: \n${JSON.stringify(rawTransaction, null, '\t')}\n------------------------`);
+	    //console.log(`Raw of Transaction: \n${JSON.stringify(rawTransaction, null, '\t')}\n------------------------`);
 	    // The private key for from_address in .env
 	    var privKey = Buffer.from(privateKey, 'hex');
 	    var transaction = new EthereumTx(rawTransaction);
@@ -240,13 +278,13 @@ exports.transferTo = async (req, res, next) => {
 
 	    var serializedTx = transaction.serialize();
 	    // Comment out these four lines if you don't really want to send the TX right now
-	    console.log(`Attempting to send signed tx:  ${serializedTx.toString('hex')}\n------------------------`);
+	    //console.log(`Attempting to send signed tx:  ${serializedTx.toString('hex')}\n------------------------`);
 	    var receipt = await web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'));
 	    // The receipt info of transaction, Uncomment for debug
-	    console.log(`Receipt info: \n${JSON.stringify(receipt, null, '\t')}\n------------------------`);
+	    //console.log(`Receipt info: \n${JSON.stringify(receipt, null, '\t')}\n------------------------`);
 	    // The balance may not be updated yet, but let's check
-	    balance = await web3.eth.getBalance(address).toNumber();
-	    console.log(`Balance after send: ${web3.utils.fromWei(balance, 'ether')} ETH`);
+	    balance = await web3.eth.getBalance(from_address);
+	    //console.log(`Balance after send: ${web3.utils.fromWei(balance, 'ether')} ETH`);
 
 	    res.status(200).json({
 			balance: web3.utils.fromWei(balance, 'ether'),	
@@ -337,13 +375,13 @@ exports.transactions = async (req, res, next) => {
 
  	if (endBlockNumber == null) {
 	    endBlockNumber = await web3.eth.getBlockNumber();
-	    console.log("Using endBlockNumber: " + endBlockNumber);
+	    //console.log("Using endBlockNumber: " + endBlockNumber);
   	}
   	if (startBlockNumber == null) {
 	    startBlockNumber = endBlockNumber - 50;
-	    console.log("Using startBlockNumber: " + startBlockNumber);
+	    //console.log("Using startBlockNumber: " + startBlockNumber);
   	}
-  	console.log("Searching for transactions to/from account \"" + address + "\" within blocks "  + startBlockNumber + " and " + endBlockNumber);
+  	//console.log("Searching for transactions to/from account \"" + address + "\" within blocks "  + startBlockNumber + " and " + endBlockNumber);
 
 	for (var i = startBlockNumber; i <= endBlockNumber; i++) {
 

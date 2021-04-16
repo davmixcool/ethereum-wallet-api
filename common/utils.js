@@ -1,13 +1,45 @@
 const Web3 = require('web3');
-const Config = require('../common/config');
-const web3 = new Web3(new Web3.providers.HttpProvider(Config.RpcProvider));
+const axios = require('axios');
+require('../config/env');
+
+if (process.env.ETH_RPC_DRIVER == 'infura') {
+var web3 = new Web3(new Web3.providers.HttpProvider(process.env.ETH_INFURA_RPC_URL));
+}else{
+var web3 = new Web3(new Web3.providers.HttpProvider(process.env.ETH_CUSTOM_RPC_URL));  
+}
+
 
 const isString = (s) => {
   return (typeof s === 'string' || s instanceof String)
 }
 
+exports.postPayload = async (payload) => {
+  try {
+    const response = await axios({
+        method: 'POST',
+        url: process.env.WEBHOOK_URL, 
+        data: payload,
+        headers: { 'Content-Type': 'application/json' }
+    });
+
+    return response;
+
+  } catch (error) {
+
+    throw new Error("Error posting payload","error");
+  }
+}
+
 exports.financial = (num,decimals) =>{
   return Number.parseFloat(num / 1 * decimals).toFixed(8);
+}
+
+
+exports.in_array = (needle, haystack) => {
+    for(var i in haystack) {
+        if(haystack[i].toLowerCase() == needle.toLowerCase()) return true;
+    }
+    return false;
 }
 
 exports.parseUnits = (value, unitName) => {
@@ -30,6 +62,31 @@ exports.parseUnits = (value, unitName) => {
     const unitKey = Object.keys(filteredObj)[Object.values(filteredObj).indexOf(unitType.toString())];
 
     let result = web3.utils.toWei(value,unitKey);
+
+    return result;
+}
+
+
+exports.fromWei = (value, unitName) => {
+
+    unitName = (unitName != null) ? unitName: 18;
+
+    if (typeof(value) !== "string") {
+         throw new Error("value must be a string", "value", value);
+    }
+
+    const units = web3.utils.unitMap;
+
+    const filteredObj = Object.keys(units).reduce((p, c) => {    
+      if (units[c].length == unitName+1) p[c] = units[c];
+      return p;
+    }, {});
+
+    const unitType = 10 ** unitName; 
+
+    const unitKey = Object.keys(filteredObj)[Object.values(filteredObj).indexOf(unitType.toString())];
+
+    let result = web3.utils.fromWei(value,unitKey);
 
     return result;
 }
