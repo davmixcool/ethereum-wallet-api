@@ -26,6 +26,7 @@ ETH, VILA, USDT, NGNS, BNB, USDC, OKB, CRO, LEO, VEN, DAI, CEL, YFI, UNI, SNX, B
 * Get Gas Suggestions
 * Get Token Info
 * Transfer Token
+* Track Ether and Token Transfer
 
 
 ## Service Setup
