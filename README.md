@@ -1,7 +1,7 @@
 <div align="center">
   <img alt="ReDoc logo" src="https://raw.githubusercontent.com/davmixcool/ethereum-wallet-api/master/public/images/logo.png" width="300px" />
 
-  EthWapi is a full-fledged Ethereum wallet service which comes with Ether address generation, tracking Ether and Token transfers, getting gas price suggestions, getting Ether/Token balance, and transfer of Ether and other supported token.
+  EthWapi is a full-fledged Ethereum wallet service that comes with Ether address generation, tracking Ether and Token transfers, getting gas price suggestions, getting Ether/Token balance, and transfer of Ether and other supported tokens.
 
   [![GitHub license](https://img.shields.io/github/license/davmixcool/ethereum-wallet-api.svg)](https://github.com/davmixcool/ethereum-wallet-api/blob/master/LICENSE) [![GitHub issues](https://img.shields.io/github/issues/davmixcool/ethereum-wallet-api.svg)](https://github.com/davmixcool/ethereum-wallet-api/issues) 
 
