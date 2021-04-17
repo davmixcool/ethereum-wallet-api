@@ -14,19 +14,21 @@ const isString = (s) => {
 }
 
 exports.postPayload = async (payload) => {
-  try {
-    const response = await axios({
-        method: 'POST',
-        url: process.env.WEBHOOK_URL, 
-        data: payload,
-        headers: { 'Content-Type': 'application/json' }
-    });
+  if (process.env.ENABLE_IPN == true) {
+    try {
+      const response = await axios({
+          method: 'POST',
+          url: process.env.IPN_URL, 
+          data: payload,
+          headers: { 'Content-Type': 'application/json' }
+      });
 
-    return response;
+      return response;
 
-  } catch (error) {
+    } catch (error) {
 
-    throw new Error("Error posting payload","error");
+      throw new Error("Error posting payload","error");
+    }
   }
 }
 
